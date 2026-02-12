@@ -1,26 +1,199 @@
 @import "tailwindcss";
 
+/* =====================================================
+   THEME REGISTRATION (Tailwind v4 REQUIRED)
+   ===================================================== */
+
+@theme {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+
+  --color-success: hsl(var(--success));
+  --color-success-foreground: hsl(var(--success-foreground));
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+}
+
+/* =====================================================
+   DESIGN TOKENS
+   ===================================================== */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: 40 20% 99%;
+  --foreground: 30 10% 15%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 30 10% 15%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 30 10% 15%;
+
+  --primary: 150 15% 45%;
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 30 10% 96%;
+  --secondary-foreground: 30 10% 25%;
+
+  --muted: 30 8% 95%;
+  --muted-foreground: 30 8% 45%;
+
+  --accent: 20 60% 55%;
+  --accent-foreground: 0 0% 100%;
+
+  --destructive: 0 72% 50%;
+  --destructive-foreground: 0 0% 100%;
+
+  --success: 150 50% 45%;
+  --success-foreground: 0 0% 100%;
+
+  --border: 30 15% 90%;
+  --input: 30 15% 90%;
+  --ring: 150 15% 45%;
+
+  --radius: 0.75rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* =====================================================
+   App-level layout helpers (Vite-style defaults)
+   ===================================================== */
+
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+/* =====================================================
+   BASE STYLES
+   ===================================================== */
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* =====================================================
+   UTILITIES
+   ===================================================== */
+
+.section-container {
+  max-width: 72rem;
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
+@media (min-width: 640px) {
+  .section-container {
+    padding-inline: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .section-container {
+    padding-inline: 2rem;
+  }
+}
+.section-padding {
+  padding-block: 4rem;
+}
+
+@media (min-width: 640px) {
+  .section-padding {
+    padding-block: 5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .section-padding {
+    padding-block: 6rem;
+  }
+}
+
+.section-alt {
+  background-color: hsl(var(--section-alt));
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+.blur-gate {
+  filter: blur(12px);
+  transition: filter 0.5s ease-out;
+}
+
+.blur-gate.revealed {
+  filter: blur(0);
 }
