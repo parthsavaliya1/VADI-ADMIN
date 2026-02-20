@@ -3,7 +3,15 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { Shield, LayoutDashboard, Users } from "lucide-react";
+import {
+  Shield,
+  LayoutDashboard,
+  Users,
+  Package,
+  ShoppingCart,
+  CreditCard,
+  FolderTree,
+} from "lucide-react";
 
 interface SidebarProps {
   open: boolean;
@@ -23,8 +31,28 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
       icon: LayoutDashboard,
     },
     {
-      name: "Leads",
-      href: "/admin/leads",
+      name: "Products",
+      href: "/admin/products",
+      icon: Package,
+    },
+    {
+      name: "Categories", // 👈 ADD THIS
+      href: "/admin/categories",
+      icon: FolderTree,
+    },
+    {
+      name: "Orders",
+      href: "/admin/orders",
+      icon: ShoppingCart,
+    },
+    {
+      name: "Payments",
+      href: "/admin/payments",
+      icon: CreditCard,
+    },
+    {
+      name: "Users",
+      href: "/admin/users",
       icon: Users,
     },
   ];
@@ -43,6 +71,7 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
         bg-card transform transition-transform duration-300 flex flex-col
         ${open ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}
       >
+        {/* Header */}
         <div className="p-6">
           <div className="flex items-center gap-3 mb-8">
             <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
@@ -53,9 +82,10 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
             </h2>
           </div>
 
+          {/* Navigation */}
           <nav className="space-y-1">
             {navItems.map((item) => {
-              const isActive = pathname === item.href;
+              const isActive = pathname.startsWith(item.href);
               const Icon = item.icon;
 
               return (
@@ -80,6 +110,7 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
           </nav>
         </div>
 
+        {/* User Section */}
         <div className="mt-auto p-4 bg-muted/30">
           <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted transition cursor-pointer">
             <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-semibold">
