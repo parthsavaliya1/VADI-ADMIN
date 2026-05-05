@@ -113,7 +113,10 @@ export default function ProductsClient() {
     if (!confirm(`Are you sure you want to deactivate "${name}"?`)) return;
 
     try {
-      await API.delete(`/products/${id}`);
+      const { data } = await API.delete(`/products/${id}`);
+      if (!data?.success) {
+        throw new Error(data?.message || "Failed to deactivate product");
+      }
       fetchProducts();
     } catch (error) {
       console.error("Delete error:", error);
@@ -121,11 +124,8 @@ export default function ProductsClient() {
     }
   };
 
-  const getDefaultVariant = (product: Product) => {
-    return (
-      product.variants.find((v) => v.isDefault) || product.variants[0] || {}
-    );
-  };
+  const getDefaultVariant = (product: Product) =>
+    product.variants.find((v) => v.isDefault) || product.variants[0] || null;
 
   const getVisiblePages = () => {
     const group = Math.floor((page - 1) / 5);
@@ -337,8 +337,9 @@ export default function ProductsClient() {
                               {product.name}
                             </div>
                             <div className="text-xs text-muted-foreground">
-                              {defaultVariant.packSize}{" "}
-                              {defaultVariant.packUnit}
+                              {defaultVariant
+                                ? `${defaultVariant.packSize} ${defaultVariant.packUnit}`
+                                : "No variant"}
                             </div>
                           </div>
                         </div>
@@ -355,26 +356,27 @@ export default function ProductsClient() {
                       </TableCell>
                       <TableCell className="whitespace-nowrap">
                         <div className="font-semibold text-green-600 dark:text-green-400">
-                          ₹{defaultVariant.price?.toLocaleString()}
+                          ₹{defaultVariant?.price?.toLocaleString?.() || 0}
                         </div>
-                        {defaultVariant.mrp > defaultVariant.price && (
+                        {defaultVariant &&
+                          defaultVariant.mrp > defaultVariant.price && (
                           <div className="text-xs text-muted-foreground line-through">
                             ₹{defaultVariant.mrp?.toLocaleString()}
                           </div>
-                        )}
+                          )}
                       </TableCell>
                       <TableCell className="whitespace-nowrap">
                         <span
                           className={`inline-flex px-2.5 py-1 rounded-full text-xs font-medium
                           ${
-                            defaultVariant.stock > 20
+                            (defaultVariant?.stock || 0) > 20
                               ? "bg-primary text-primary-foreground"
-                              : defaultVariant.stock > 0
+                              : (defaultVariant?.stock || 0) > 0
                                 ? "bg-primary text-primary-foreground"
                                 : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
                           }`}
                         >
-                          {defaultVariant.stock || 0} units
+                          {defaultVariant?.stock || 0} units
                         </span>
                       </TableCell>
                       <TableCell className="whitespace-nowrap">

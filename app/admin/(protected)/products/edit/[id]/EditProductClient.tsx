@@ -196,13 +196,16 @@ export default function EditProductClient({
 
     setUploading(true);
     try {
-      const uploadedUrls: string[] = [];
+      const uploadedResults = await Promise.all(
+        Array.from(files).map((file) => uploadImageToSupabase(file)),
+      );
+      const uploadedUrls = uploadedResults.filter(
+        (url): url is string => Boolean(url),
+      );
 
-      for (let i = 0; i < files.length; i++) {
-        const url = await uploadImageToSupabase(files[i]);
-        if (url) {
-          uploadedUrls.push(url);
-        }
+      if (!uploadedUrls.length) {
+        alert("No images were uploaded. Please try again.");
+        return;
       }
 
       setFormData((prev) => ({
@@ -214,6 +217,7 @@ export default function EditProductClient({
       alert("Failed to upload images");
     } finally {
       setUploading(false);
+      e.target.value = "";
     }
   };
 
@@ -302,8 +306,67 @@ export default function EditProductClient({
     }));
   };
 
+  const validateBeforeSubmit = () => {
+    if (!formData.sellerId.trim()) {
+      alert("Seller ID is required");
+      return false;
+    }
+
+    if (!variants.length) {
+      alert("At least one variant is required");
+      return false;
+    }
+
+    const hasDefault = variants.some((v) => v.isDefault);
+    if (!hasDefault) {
+      alert("Please set one default variant");
+      return false;
+    }
+
+    for (let i = 0; i < variants.length; i++) {
+      const variant = variants[i];
+      const label = `Variant ${i + 1}`;
+
+      if (!Number.isFinite(variant.packSize) || variant.packSize <= 0) {
+        alert(`${label}: Pack size must be greater than 0`);
+        return false;
+      }
+
+      if (!Number.isFinite(variant.mrp) || variant.mrp < 0) {
+        alert(`${label}: MRP must be 0 or greater`);
+        return false;
+      }
+
+      if (!Number.isFinite(variant.price) || variant.price < 0) {
+        alert(`${label}: Price must be 0 or greater`);
+        return false;
+      }
+
+      if (!Number.isFinite(variant.stock) || variant.stock < 0) {
+        alert(`${label}: Stock must be 0 or greater`);
+        return false;
+      }
+
+      if (
+        !Number.isFinite(variant.lowStockThreshold) ||
+        variant.lowStockThreshold < 0
+      ) {
+        alert(`${label}: Low stock threshold must be 0 or greater`);
+        return false;
+      }
+
+      if (variant.price > variant.mrp) {
+        alert(`${label}: Price cannot be greater than MRP`);
+        return false;
+      }
+    }
+
+    return true;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validateBeforeSubmit()) return;
     setLoading(true);
 
     try {
@@ -346,7 +409,14 @@ export default function EditProductClient({
             area: formData.sellerArea,
           },
         },
-        variants,
+        variants: variants.map((variant) => ({
+          ...variant,
+          packSize: Number(variant.packSize),
+          mrp: Number(variant.mrp),
+          price: Number(variant.price),
+          stock: Number(variant.stock),
+          lowStockThreshold: Number(variant.lowStockThreshold),
+        })),
       };
 
       const { data } = await API.put(`/products/${productId}`, payload);
@@ -358,7 +428,7 @@ export default function EditProductClient({
       }
     } catch (error: any) {
       console.error("Submit error:", error);
-      alert(error.response?.data?.message || "Failed to create product");
+      alert(error.response?.data?.message || "Failed to update product");
     } finally {
       setLoading(false);
     }

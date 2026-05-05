@@ -1,21 +1,26 @@
-import { supabase } from "@/lib/supabase";
-
 export const uploadImageToSupabase = async (file: File) => {
-  const fileName = `${Date.now()}-${file.name}`;
+  try {
+    const formData = new FormData();
+    formData.append("file", file);
 
-  const { error } = await supabase.storage
-    .from("VADI") // your bucket name
-    .upload(`products/${fileName}`, file);
+    const response = await fetch("/api/admin/upload", {
+      method: "POST",
+      body: formData,
+    });
 
-  if (error) {
-    alert("Image upload failed");
-    console.error(error);
+    const data = await response.json();
+    if (!response.ok || !data?.success || !data?.url) {
+      throw new Error(
+        data?.message || data?.error || data?.details || "Image upload failed",
+      );
+    }
+
+    return data.url as string;
+  } catch (error) {
+    console.error("Bunny upload failed:", error);
+    alert(
+      error instanceof Error ? error.message : "Image upload failed. Try again.",
+    );
     return null;
   }
-
-  const { data } = supabase.storage
-    .from("VADI")
-    .getPublicUrl(`products/${fileName}`);
-
-  return data.publicUrl;
 };

@@ -8,7 +8,7 @@ export async function GET(request: Request) {
     const limit = searchParams.get("limit") || "10";
     const search = searchParams.get("search") || "";
 
-    const backendUrl = `http://localhost:5000/products?page=${page}&limit=${limit}&search=${search}`;
+    const backendUrl = `https://vadi-backend.onrender.com/products?page=${page}&limit=${limit}&search=${search}`;
 
     const res = await fetch(backendUrl);
 
