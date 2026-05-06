@@ -1,8 +1,9 @@
 "use client";
 
-import { FormEvent, useState } from "react";
-import { BellRing, Loader2, Send } from "lucide-react";
+import { FormEvent, useEffect, useState } from "react";
+import { BellRing, Loader2, Send, Upload } from "lucide-react";
 import API from "@/lib/api";
+import { uploadImageToSupabase } from "@/lib/upload";
 
 type BroadcastStats = {
   totalTokens: number;
@@ -11,13 +12,55 @@ type BroadcastStats = {
   invalidTokensRemoved?: number;
 };
 
+type NotificationItem = {
+  _id: string;
+  title: string;
+  body: string;
+  imageUrl?: string;
+  createdAt: string;
+  stats?: BroadcastStats;
+};
+
 export default function NotificationsPage() {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [sending, setSending] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState("");
   const [stats, setStats] = useState<BroadcastStats | null>(null);
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const [loadingList, setLoadingList] = useState(true);
+
+  const fetchNotifications = async () => {
+    setLoadingList(true);
+    try {
+      const { data } = await API.get("/api/admin/notifications");
+      setNotifications(data.data || []);
+    } catch (error) {
+      console.error("Failed to fetch notifications:", error);
+      setNotifications([]);
+    } finally {
+      setLoadingList(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+
+    try {
+      const uploadedUrl = await uploadImageToSupabase(file, "notification");
+      if (uploadedUrl) setImageUrl(uploadedUrl);
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -37,6 +80,7 @@ export default function NotificationsPage() {
       setTitle("");
       setBody("");
       setImageUrl("");
+      fetchNotifications();
     } catch (error: any) {
       setMessage(
         error.response?.data?.message ||
@@ -109,6 +153,20 @@ export default function NotificationsPage() {
           <p className="text-xs text-muted-foreground mt-2">
             Use a public image URL. This will be sent as notification image.
           </p>
+          <label className="mt-3 inline-flex items-center gap-2 px-3 py-2 border rounded-lg cursor-pointer text-sm hover:bg-muted/40">
+            <Upload className="h-4 w-4" />
+            Upload image to Bunny
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleImageUpload}
+              disabled={uploading}
+            />
+          </label>
+          {uploading && (
+            <p className="text-xs text-blue-600 mt-2">Uploading image...</p>
+          )}
         </div>
 
         <button
@@ -157,6 +215,46 @@ export default function NotificationsPage() {
           )}
         </div>
       )}
+
+      <div className="bg-card rounded-xl shadow-sm border p-4 md:p-6">
+        <h2 className="text-lg font-semibold">Notification List</h2>
+        <p className="text-sm text-muted-foreground mt-1">
+          Stored notifications from notification table
+        </p>
+
+        {loadingList ? (
+          <div className="py-8 text-sm text-muted-foreground">Loading...</div>
+        ) : notifications.length === 0 ? (
+          <div className="py-8 text-sm text-muted-foreground">
+            No notifications found
+          </div>
+        ) : (
+          <div className="mt-4 space-y-3">
+            {notifications.map((item) => (
+              <div key={item._id} className="border rounded-lg p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="font-medium">{item.title}</p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {item.body}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      {new Date(item.createdAt).toLocaleString()}
+                    </p>
+                  </div>
+                  {item.imageUrl ? (
+                    <img
+                      src={item.imageUrl}
+                      alt={item.title}
+                      className="w-20 h-20 rounded object-cover border"
+                    />
+                  ) : null}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

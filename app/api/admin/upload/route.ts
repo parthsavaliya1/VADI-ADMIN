@@ -20,6 +20,13 @@ const normalizePathPrefix = (path: string) =>
     .filter(Boolean)
     .join("/");
 
+const folderToPrefix: Record<string, string> = {
+  product: "product",
+  category: "category",
+  notification: "notification",
+  banner: "banner",
+};
+
 export async function POST(request: Request) {
   try {
     const storageZone = process.env.BUNNY_STORAGE_ZONE;
@@ -39,6 +46,7 @@ export async function POST(request: Request) {
 
     const formData = await request.formData();
     const file = formData.get("file");
+    const folder = String(formData.get("folder") || "product").toLowerCase();
 
     if (!(file instanceof File)) {
       return NextResponse.json(
@@ -52,9 +60,11 @@ export async function POST(request: Request) {
       : "jpg";
     const safeName = sanitizeFileName(file.name.replace(/\.[^/.]+$/, ""));
     const fileName = `${Date.now()}-${safeName}.${ext || "jpg"}`;
-    const baseFolder = normalizePathPrefix(
-      process.env.BUNNY_UPLOAD_PREFIX || "vadi-app/products",
+    const rootPrefix = normalizePathPrefix(
+      process.env.BUNNY_UPLOAD_PREFIX || "vadi-app",
     );
+    const folderName = folderToPrefix[folder] || folderToPrefix.product;
+    const baseFolder = normalizePathPrefix(`${rootPrefix}/${folderName}`);
     const objectPath = `${baseFolder}/${fileName}`;
     const uploadUrl = `${getStorageHost()}/${storageZone}/${objectPath}`;
 

@@ -1,7 +1,13 @@
-export const uploadImageToSupabase = async (file: File) => {
+type UploadFolder = "product" | "category" | "notification" | "banner";
+
+export const uploadImageToSupabase = async (
+  file: File,
+  folder: UploadFolder = "product",
+) => {
   try {
     const formData = new FormData();
     formData.append("file", file);
+    formData.append("folder", folder);
 
     const response = await fetch("/api/admin/upload", {
       method: "POST",

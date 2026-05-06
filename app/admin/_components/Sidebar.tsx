@@ -12,6 +12,7 @@ import {
   CreditCard,
   FolderTree,
   BellRing,
+  Image as ImageIcon,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -60,6 +61,11 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
       name: "Notifications",
       href: "/admin/notifications",
       icon: BellRing,
+    },
+    {
+      name: "Banner",
+      href: "/admin/banner",
+      icon: ImageIcon,
     },
   ];
 
