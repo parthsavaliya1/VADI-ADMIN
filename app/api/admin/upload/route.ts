@@ -20,8 +20,18 @@ const normalizePathPrefix = (path: string) =>
     .filter(Boolean)
     .join("/");
 
+const resolveRootPrefix = () => {
+  const configured = normalizePathPrefix(
+    process.env.BUNNY_UPLOAD_PREFIX || "vadi-app",
+  );
+
+  // If existing env ends with product/products, use parent folder as root.
+  const cleaned = configured.replace(/\/?(product|products)$/i, "");
+  return normalizePathPrefix(cleaned || "vadi-app");
+};
+
 const folderToPrefix: Record<string, string> = {
-  product: "product",
+  product: "products",
   category: "category",
   notification: "notification",
   banner: "banner",
@@ -60,9 +70,7 @@ export async function POST(request: Request) {
       : "jpg";
     const safeName = sanitizeFileName(file.name.replace(/\.[^/.]+$/, ""));
     const fileName = `${Date.now()}-${safeName}.${ext || "jpg"}`;
-    const rootPrefix = normalizePathPrefix(
-      process.env.BUNNY_UPLOAD_PREFIX || "vadi-app",
-    );
+    const rootPrefix = resolveRootPrefix();
     const folderName = folderToPrefix[folder] || folderToPrefix.product;
     const baseFolder = normalizePathPrefix(`${rootPrefix}/${folderName}`);
     const objectPath = `${baseFolder}/${fileName}`;
