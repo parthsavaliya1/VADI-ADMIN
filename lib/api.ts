@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getSession } from "next-auth/react";
 
 const API = axios.create({
   baseURL:
@@ -6,10 +7,11 @@ const API = axios.create({
   withCredentials: true, // if using cookies
 });
 
-// Attach token automatically
-API.interceptors.request.use((config) => {
+// Attach admin bearer token from NextAuth session
+API.interceptors.request.use(async (config) => {
   if (typeof window !== "undefined") {
-    const token = localStorage.getItem("adminToken");
+    const session = await getSession();
+    const token = session?.accessToken;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
