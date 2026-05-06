@@ -21,6 +21,12 @@ type Category = {
   slug: string;
 };
 
+type Seller = {
+  _id: string;
+  name: string;
+  code?: string;
+};
+
 type Variant = {
   packSize: number;
   packUnit: string;
@@ -42,6 +48,7 @@ export default function EditProductClient({
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [sellers, setSellers] = useState<Seller[]>([]);
   const [fetching, setFetching] = useState(true);
 
   const [formData, setFormData] = useState({
@@ -66,11 +73,6 @@ export default function EditProductClient({
     expiryRequired: true,
     storageInstructions: "",
     sellerId: "",
-    sellerName: "",
-    sellerPhone: "",
-    sellerEmail: "",
-    sellerCity: "",
-    sellerArea: "",
   });
 
   const [variants, setVariants] = useState<Variant[]>([
@@ -118,12 +120,10 @@ export default function EditProductClient({
           shelfLifeUnit: product.shelfLife?.unit || "days",
           expiryRequired: product.expiryRequired ?? true,
           storageInstructions: product.storageInstructions || "",
-          sellerId: product.seller?.sellerId || "",
-          sellerName: product.seller?.sellerName || "",
-          sellerPhone: product.seller?.contact?.phone || "",
-          sellerEmail: product.seller?.contact?.email || "",
-          sellerCity: product.seller?.location?.city || "",
-          sellerArea: product.seller?.location?.area || "",
+          sellerId:
+            typeof product.seller?.sellerId === "string"
+              ? product.seller.sellerId
+              : product.seller?.sellerId?._id || "",
         });
 
         setVariants(product.variants || []);
@@ -138,6 +138,7 @@ export default function EditProductClient({
 
   useEffect(() => {
     fetchCategories();
+    fetchSellers();
     fetchProduct();
   }, [productId]);
 
@@ -151,6 +152,19 @@ export default function EditProductClient({
       }
     } catch (error) {
       console.error("Fetch categories error:", error);
+    }
+  };
+
+  const fetchSellers = async () => {
+    try {
+      const { data } = await API.get("/sellers", {
+        params: { isActive: "true", sortBy: "name", sortOrder: "asc" },
+      });
+      if (data.success) {
+        setSellers(data.data || []);
+      }
+    } catch (error) {
+      console.error("Fetch sellers error:", error);
     }
   };
 
@@ -308,7 +322,7 @@ export default function EditProductClient({
 
   const validateBeforeSubmit = () => {
     if (!formData.sellerId.trim()) {
-      alert("Seller ID is required");
+      alert("Seller is required");
       return false;
     }
 
@@ -399,15 +413,6 @@ export default function EditProductClient({
         storageInstructions: formData.storageInstructions,
         seller: {
           sellerId: formData.sellerId,
-          sellerName: formData.sellerName,
-          contact: {
-            phone: formData.sellerPhone,
-            email: formData.sellerEmail,
-          },
-          location: {
-            city: formData.sellerCity,
-            area: formData.sellerArea,
-          },
         },
         variants: variants.map((variant) => ({
           ...variant,
@@ -801,96 +806,27 @@ export default function EditProductClient({
                   Seller Information
                 </h2>
 
-                <div className="grid md:grid-cols-2 gap-4">
+                <div>
                   <div>
                     <label className="block text-sm font-medium mb-2">
-                      Seller ID *
+                      Seller *
                     </label>
-                    <input
-                      type="text"
+                    <select
                       name="sellerId"
                       value={formData.sellerId}
                       onChange={handleChange}
                       required
-                      placeholder="e.g., VADI, SELLER001"
                       className="w-full px-4 py-3 rounded-lg border bg-background 
                                focus:outline-none focus:ring-2 focus:ring-primary/50 transition"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium mb-2">
-                      Seller Name
-                    </label>
-                    <input
-                      type="text"
-                      name="sellerName"
-                      value={formData.sellerName}
-                      onChange={handleChange}
-                      placeholder="Enter seller name"
-                      className="w-full px-4 py-3 rounded-lg border bg-background 
-                               focus:outline-none focus:ring-2 focus:ring-primary/50 transition"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium mb-2">
-                      Phone
-                    </label>
-                    <input
-                      type="tel"
-                      name="sellerPhone"
-                      value={formData.sellerPhone}
-                      onChange={handleChange}
-                      placeholder="+91 XXXXX XXXXX"
-                      className="w-full px-4 py-3 rounded-lg border bg-background 
-                               focus:outline-none focus:ring-2 focus:ring-primary/50 transition"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium mb-2">
-                      Email
-                    </label>
-                    <input
-                      type="email"
-                      name="sellerEmail"
-                      value={formData.sellerEmail}
-                      onChange={handleChange}
-                      placeholder="seller@example.com"
-                      className="w-full px-4 py-3 rounded-lg border bg-background 
-                               focus:outline-none focus:ring-2 focus:ring-primary/50 transition"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium mb-2">
-                      City
-                    </label>
-                    <input
-                      type="text"
-                      name="sellerCity"
-                      value={formData.sellerCity}
-                      onChange={handleChange}
-                      placeholder="Enter city"
-                      className="w-full px-4 py-3 rounded-lg border bg-background 
-                               focus:outline-none focus:ring-2 focus:ring-primary/50 transition"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium mb-2">
-                      Area
-                    </label>
-                    <input
-                      type="text"
-                      name="sellerArea"
-                      value={formData.sellerArea}
-                      onChange={handleChange}
-                      placeholder="Enter area"
-                      className="w-full px-4 py-3 rounded-lg border bg-background 
-                               focus:outline-none focus:ring-2 focus:ring-primary/50 transition"
-                    />
+                    >
+                      <option value="">Select Seller</option>
+                      {sellers.map((seller) => (
+                        <option key={seller._id} value={seller._id}>
+                          {seller.name}
+                          {seller.code ? ` (${seller.code})` : ""}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
               </div>
