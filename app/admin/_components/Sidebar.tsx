@@ -13,6 +13,7 @@ import {
   FolderTree,
   BellRing,
   Image as ImageIcon,
+  Timer,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -66,6 +67,11 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
       name: "Banner",
       href: "/admin/banner",
       icon: ImageIcon,
+    },
+    {
+      name: "Deal Settings",
+      href: "/admin/deal-settings",
+      icon: Timer,
     },
   ];
 
