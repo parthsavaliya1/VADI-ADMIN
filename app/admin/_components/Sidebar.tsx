@@ -11,6 +11,8 @@ import {
   ShoppingCart,
   CreditCard,
   FolderTree,
+  BellRing,
+  Image as ImageIcon,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -54,6 +56,16 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
       name: "Users",
       href: "/admin/users",
       icon: Users,
+    },
+    {
+      name: "Notifications",
+      href: "/admin/notifications",
+      icon: BellRing,
+    },
+    {
+      name: "Banner",
+      href: "/admin/banner",
+      icon: ImageIcon,
     },
   ];
 

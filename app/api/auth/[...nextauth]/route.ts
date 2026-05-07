@@ -1,6 +1,16 @@
 import NextAuth, { type NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
+const BACKEND_URL =
+  process.env.API_URL ||
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://vadi-backend.onrender.com";
+
+type AuthUser = {
+  id: string;
+  accessToken?: string;
+};
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -11,9 +21,7 @@ export const authOptions: NextAuthOptions = {
       },
 
       async authorize(credentials) {
-        console.log("Credentials:", credentials);
-
-        const res = await fetch("http://localhost:5000/api/admin/login", {
+        const res = await fetch(`${BACKEND_URL}/api/admin/login`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -25,8 +33,6 @@ export const authOptions: NextAuthOptions = {
         });
 
         const data = await res.json();
-
-        console.log("Backend response:", res.status, data);
 
         if (!res.ok) return null;
 
@@ -50,8 +56,9 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
-        token.accessToken = user.accessToken;
+        const authUser = user as AuthUser;
+        token.id = authUser.id;
+        token.accessToken = authUser.accessToken;
       }
       return token;
     },

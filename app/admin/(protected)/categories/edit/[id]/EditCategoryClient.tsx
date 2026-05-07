@@ -75,7 +75,7 @@ export default function EditCategoryClient({
     setUploading(true);
 
     try {
-      const url = await uploadImageToSupabase(file);
+      const url = await uploadImageToSupabase(file, "category");
       if (url) {
         setFormData((prev) => ({
           ...prev,
