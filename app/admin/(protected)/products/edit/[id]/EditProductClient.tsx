@@ -62,6 +62,7 @@ export default function EditProductClient({
     featured: false,
     trending: false,
     bestDeal: false,
+    offerEndsAt: "",
     isActive: true,
     discount: 0,
     taxGstPercent: 0,
@@ -111,6 +112,9 @@ export default function EditProductClient({
           trending: product.trending || false,
           bestDeal: product.bestDeal || false,
           isActive: product.isActive ?? true,
+          offerEndsAt: product.offerEndsAt
+            ? new Date(product.offerEndsAt).toISOString().slice(0, 16)
+            : "",
           discount: product.discount || 0,
           taxGstPercent: product.tax?.gstPercent || 0,
           taxInclusive: product.tax?.inclusive ?? true,
@@ -396,6 +400,9 @@ export default function EditProductClient({
         trending: formData.trending,
         bestDeal: formData.bestDeal,
         isActive: formData.isActive,
+        offerEndsAt: formData.offerEndsAt.trim()
+          ? new Date(formData.offerEndsAt).toISOString()
+          : null,
         discount: Number(formData.discount),
         tax: {
           gstPercent: Number(formData.taxGstPercent),
@@ -1246,6 +1253,25 @@ export default function EditProductClient({
                       </div>
                     </div>
                   </label>
+
+                  <div className="pt-2 border-t border-border/60">
+                    <label className="block text-sm font-medium mb-2">
+                      Offer ends at (optional)
+                    </label>
+                    <input
+                      type="datetime-local"
+                      name="offerEndsAt"
+                      value={formData.offerEndsAt}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-lg border bg-background focus:outline-none focus:ring-2 focus:ring-primary/50 transition"
+                    />
+                    <p className="text-xs text-muted-foreground mt-2">
+                      This product&apos;s own deadline. Shown as &quot;This offer
+                      ends in&quot; on the product page and overrides the mega sale
+                      timer from Deal Settings. Leave empty to use only the mega
+                      sale time (when Deal Settings timer is on).
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>

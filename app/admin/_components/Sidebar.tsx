@@ -14,6 +14,7 @@ import {
   BellRing,
   Image as ImageIcon,
   Timer,
+  LayoutGrid,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -72,6 +73,11 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
       name: "Deal Settings",
       href: "/admin/deal-settings",
       icon: Timer,
+    },
+    {
+      name: "Home sections",
+      href: "/admin/home-section-settings",
+      icon: LayoutGrid,
     },
   ];
 

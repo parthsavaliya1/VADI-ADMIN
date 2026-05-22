@@ -81,14 +81,17 @@ export default function DealSettingsPage() {
       <div>
         <h1 className="text-3xl font-bold">Deal Settings</h1>
         <p className="text-muted-foreground mt-1">
-          Configure one global countdown timer for app deals.
+          Mega sale countdown (like Big Billion Days): when the timer is active,
+          every product page shows this same &quot;Sale ends in&quot; time until
+          the sale ends. You can still set a different end time on individual
+          products — that overrides the mega sale timer for that product only.
         </p>
       </div>
 
       <div className="bg-card rounded-xl shadow-sm border p-6 space-y-5">
         <div className="flex items-center gap-2 text-lg font-semibold">
           <Timer className="h-5 w-5 text-primary" />
-          Global Deal Timer
+          Mega sale timer (all products)
         </div>
 
         <label className="flex items-center gap-3 p-4 bg-muted/40 rounded-lg cursor-pointer">
@@ -101,7 +104,8 @@ export default function DealSettingsPage() {
           <div>
             <div className="font-medium text-sm">Timer Active</div>
             <div className="text-xs text-muted-foreground">
-              Enable/disable countdown on app deal section
+              When on, the same sale countdown appears on every product in the
+              app (unless that product has its own &quot;Offer ends at&quot; below).
             </div>
           </div>
         </label>
