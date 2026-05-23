@@ -49,6 +49,8 @@ type Order = {
   totalDiscount: number;
   grandTotal: number;
   status: string;
+  deliveryHandoverCode?: string;
+  deliveryHandoverVerifiedAt?: string;
   payment: {
     method: string;
     status: string;
@@ -86,6 +88,7 @@ const ORDER_STATUSES = [
   "placed",
   "confirmed",
   "packed",
+  "shipped",
   "out_for_delivery",
   "delivered",
   "cancelled",
@@ -102,6 +105,8 @@ export default function OrderDetailClient({ orderId }: { orderId: string }) {
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
+  const [handoverInput, setHandoverInput] = useState("");
+  const [verifyingHandover, setVerifyingHandover] = useState(false);
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -128,12 +133,42 @@ export default function OrderDetailClient({ orderId }: { orderId: string }) {
       const { data } = await API.put(`/orders/${orderId}/status`, {
         status: newStatus,
       });
-      if (data.success) setOrder({ ...order, status: newStatus });
-    } catch (error) {
+      if (data.success) {
+        setOrder({ ...order, ...data.data, status: newStatus });
+        setHandoverInput("");
+      }
+    } catch (error: unknown) {
       console.error("Update status error:", error);
-      alert("Failed to update order status");
+      const msg =
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Failed to update order status";
+      alert(msg);
     } finally {
       setUpdating(false);
+    }
+  };
+
+  const verifyHandover = async () => {
+    if (!order || !handoverInput.trim()) return;
+    setVerifyingHandover(true);
+    try {
+      const { data } = await API.post(
+        `/orders/${orderId}/verify-delivery-handover`,
+        { code: handoverInput.trim() },
+      );
+      if (data.success && data.data) {
+        setOrder({ ...order, ...data.data });
+        setHandoverInput("");
+        alert(data.message || "Verified");
+      }
+    } catch (error: unknown) {
+      console.error("Verify handover error:", error);
+      const msg =
+        (error as { response?: { data?: { message?: string } } })?.response
+          ?.data?.message || "Verification failed";
+      alert(msg);
+    } finally {
+      setVerifyingHandover(false);
     }
   };
 
@@ -258,6 +293,41 @@ export default function OrderDetailClient({ orderId }: { orderId: string }) {
                 })}
               </div>
             </div>
+
+            {/* Delivery handover (customer tells driver this code) */}
+            {order.status === "out_for_delivery" && (
+              <div className="bg-card rounded-xl shadow-sm border border-purple-200/80 p-6">
+                <h2 className="text-lg font-semibold mb-1">
+                  Delivery handover code
+                </h2>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Enter the 6-digit code from the customer&apos;s app (order tracking).
+                  A correct code marks the order <strong>Delivered</strong> and
+                  completes COD collection when applicable.
+                </p>
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={6}
+                    placeholder="6-digit code"
+                    value={handoverInput}
+                    onChange={(e) =>
+                      setHandoverInput(e.target.value.replace(/\D/g, ""))
+                    }
+                    className="flex-1 min-w-0 rounded-lg border bg-background px-3 py-2 font-mono text-lg tracking-widest"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => void verifyHandover()}
+                    disabled={verifyingHandover || handoverInput.length !== 6}
+                    className="rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 disabled:opacity-50"
+                  >
+                    {verifyingHandover ? "Checking…" : "Verify & mark delivered"}
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* Status Update */}
             <div className="bg-card rounded-xl shadow-sm border p-6">

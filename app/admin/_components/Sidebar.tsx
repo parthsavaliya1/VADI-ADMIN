@@ -15,6 +15,7 @@ import {
   Image as ImageIcon,
   Timer,
   LayoutGrid,
+  Truck,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -58,6 +59,11 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
       name: "Users",
       href: "/admin/users",
       icon: Users,
+    },
+    {
+      name: "Drivers",
+      href: "/admin/drivers",
+      icon: Truck,
     },
     {
       name: "Notifications",

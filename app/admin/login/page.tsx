@@ -13,7 +13,7 @@ export default function LoginPage() {
     setLoading(true);
     setError("");
 
-    const res = await signIn("credentials", {
+    const res = await signIn("admin-credentials", {
       email,
       password,
       redirect: false,
@@ -90,7 +90,16 @@ export default function LoginPage() {
         </div>
 
         {/* Footer */}
-        <p className="text-xs text-muted-foreground text-center mt-6">
+        <p className="text-center mt-6 text-sm">
+          <a
+            href="/driver/login"
+            className="text-primary font-medium hover:underline"
+          >
+            Delivery staff login
+          </a>
+        </p>
+
+        <p className="text-xs text-muted-foreground text-center mt-4">
           © {new Date().getFullYear()} VADI Admin
         </p>
       </div>

@@ -30,6 +30,7 @@ const STATUS_STYLES: Record<string, string> = {
   placed: "bg-yellow-100 text-yellow-700",
   confirmed: "bg-blue-100 text-blue-700",
   packed: "bg-orange-100 text-orange-700",
+  shipped: "bg-cyan-100 text-cyan-700",
   out_for_delivery: "bg-purple-100 text-purple-700",
   delivered: "bg-green-100 text-green-700",
   cancelled: "bg-red-100 text-red-700",
@@ -122,6 +123,7 @@ export default function OrdersClient() {
           <option value="placed">Placed</option>
           <option value="confirmed">Confirmed</option>
           <option value="packed">Packed</option>
+          <option value="shipped">Shipped</option>
           <option value="out_for_delivery">Out for Delivery</option>
           <option value="delivered">Delivered</option>
           <option value="cancelled">Cancelled</option>
@@ -329,8 +331,30 @@ function OrderActions({
         </button>
       )}
 
-      {/* Mark Delivered */}
+      {/* Ship */}
       {order.status === "packed" && (
+        <button
+          onClick={() => onUpdateStatus(order._id, "shipped")}
+          className={`${btnBase} bg-cyan-50 text-cyan-700 hover:bg-cyan-600 hover:text-white`}
+        >
+          <Truck size={13} />
+          Shipped
+        </button>
+      )}
+
+      {/* Out for delivery */}
+      {order.status === "shipped" && (
+        <button
+          onClick={() => onUpdateStatus(order._id, "out_for_delivery")}
+          className={`${btnBase} bg-purple-50 text-purple-700 hover:bg-purple-600 hover:text-white`}
+        >
+          <Truck size={13} />
+          Out for delivery
+        </button>
+      )}
+
+      {/* Mark Delivered — only when not waiting on handover (e.g. skipped OFD) */}
+      {(order.status === "shipped" || order.status === "packed") && (
         <button
           onClick={() => onUpdateStatus(order._id, "delivered")}
           className={`${btnBase} bg-green-50 text-green-600 hover:bg-green-500 hover:text-white`}

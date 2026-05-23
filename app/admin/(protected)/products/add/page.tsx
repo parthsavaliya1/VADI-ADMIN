@@ -57,6 +57,7 @@ export default function AddProductClient() {
     featured: false,
     trending: false,
     bestDeal: false,
+    isOrganic: false,
     offerEndsAt: "",
     isActive: true,
     discount: 0,
@@ -346,6 +347,7 @@ export default function AddProductClient() {
         featured: formData.featured,
         trending: formData.trending,
         bestDeal: formData.bestDeal,
+        isOrganic: formData.isOrganic,
         isActive: formData.isActive,
         offerEndsAt: formData.offerEndsAt.trim()
           ? new Date(formData.offerEndsAt).toISOString()
@@ -1187,6 +1189,22 @@ export default function AddProductClient() {
                       <div className="font-medium text-sm">Best Deal</div>
                       <div className="text-xs text-muted-foreground">
                         Highlight as best deal
+                      </div>
+                    </div>
+                  </label>
+
+                  <label className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg cursor-pointer hover:bg-muted/50 transition">
+                    <input
+                      type="checkbox"
+                      name="isOrganic"
+                      checked={formData.isOrganic}
+                      onChange={handleChange}
+                      className="w-4 h-4 rounded"
+                    />
+                    <div>
+                      <div className="font-medium text-sm">Organic</div>
+                      <div className="text-xs text-muted-foreground">
+                        Show organic label on product details in the app
                       </div>
                     </div>
                   </label>

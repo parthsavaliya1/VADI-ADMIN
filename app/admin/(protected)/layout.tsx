@@ -11,7 +11,12 @@ export default async function AdminLayout({
   const session = await getServerSession(authOptions);
 
   if (!session) {
-    redirect("/admin/login"); // ✅ FIXED PATH
+    redirect("/admin/login");
+  }
+
+  const role = session.user?.role;
+  if (role === "driver") {
+    redirect("/driver/deliveries");
   }
 
   return <AdminShell session={session}>{children}</AdminShell>;
