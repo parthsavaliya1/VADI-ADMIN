@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
 import {
   ArrowLeft,
   Plus,
@@ -41,6 +42,10 @@ type Variant = {
 
 export default function AddProductClient() {
   const router = useRouter();
+  const pathname = usePathname();
+  const { data: session } = useSession();
+  const isSeller = pathname.startsWith("/admin/seller");
+  const sellerAccountId = session?.user?.role === "seller" ? session.user.id : "";
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -91,12 +96,18 @@ export default function AddProductClient() {
 
   useEffect(() => {
     fetchCategories();
-    fetchSellers();
-  }, []);
+    if (!isSeller) fetchSellers();
+  }, [isSeller]);
+
+  useEffect(() => {
+    if (isSeller && sellerAccountId) {
+      setFormData((prev) => ({ ...prev, sellerId: sellerAccountId }));
+    }
+  }, [isSeller, sellerAccountId]);
 
   const fetchCategories = async () => {
     try {
-      const { data } = await API.get("/api/admin/categories", {
+      const { data } = await API.get(isSeller ? "/categories" : "/api/admin/categories", {
         params: { isActive: "true" },
       });
       if (data.success) {
@@ -273,7 +284,7 @@ export default function AddProductClient() {
   };
 
   const validateBeforeSubmit = () => {
-    if (!formData.sellerId.trim()) {
+    if (isSeller ? !sellerAccountId : !formData.sellerId.trim()) {
       alert("Seller is required");
       return false;
     }
@@ -344,9 +355,9 @@ export default function AddProductClient() {
         unit: formData.unit,
         image: formData.image,
         images: formData.images,
-        featured: formData.featured,
-        trending: formData.trending,
-        bestDeal: formData.bestDeal,
+        featured: isSeller ? false : formData.featured,
+        trending: isSeller ? false : formData.trending,
+        bestDeal: isSeller ? false : formData.bestDeal,
         isOrganic: formData.isOrganic,
         isActive: formData.isActive,
         offerEndsAt: formData.offerEndsAt.trim()
@@ -368,7 +379,7 @@ export default function AddProductClient() {
         expiryRequired: formData.expiryRequired,
         storageInstructions: formData.storageInstructions,
         seller: {
-          sellerId: formData.sellerId,
+          sellerId: isSeller ? sellerAccountId : formData.sellerId,
         },
         variants: variants.map((variant) => ({
           ...variant,
@@ -380,10 +391,10 @@ export default function AddProductClient() {
         })),
       };
 
-      const { data } = await API.post("/api/admin/products", payload);
+      const { data } = await API.post(isSeller ? "/products" : "/api/admin/products", payload);
 
       if (data.success) {
-        router.push("/admin/products");
+        router.push(isSeller ? "/admin/seller/products" : "/admin/products");
       } else {
         alert(data.message || "Failed to create product");
       }
@@ -401,7 +412,7 @@ export default function AddProductClient() {
         {/* Header */}
         <div className="mb-8">
           <Link
-            href="/admin/products"
+            href={isSeller ? "/admin/seller/products" : "/admin/products"}
             className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition mb-4"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -744,7 +755,7 @@ export default function AddProductClient() {
               </div>
 
               {/* Seller Information */}
-              <div className="bg-card rounded-xl shadow-sm border p-6">
+              {!isSeller && <div className="bg-card rounded-xl shadow-sm border p-6">
                 <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
                   <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
                     <span className="text-primary font-bold">3</span>
@@ -775,7 +786,7 @@ export default function AddProductClient() {
                     </select>
                   </div>
                 </div>
-              </div>
+              </div>}
 
               {/* Additional Details */}
               <div className="bg-card rounded-xl shadow-sm border p-6">
@@ -1145,6 +1156,8 @@ export default function AddProductClient() {
                     </div>
                   </label>
 
+                  {!isSeller ? (
+                    <>
                   <label className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg cursor-pointer hover:bg-muted/50 transition">
                     <input
                       type="checkbox"
@@ -1192,6 +1205,8 @@ export default function AddProductClient() {
                       </div>
                     </div>
                   </label>
+                    </>
+                  ) : null}
 
                   <label className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg cursor-pointer hover:bg-muted/50 transition">
                     <input

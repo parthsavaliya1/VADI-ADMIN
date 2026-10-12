@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession, signOut } from "next-auth/react";
-import { Menu, ChevronDown } from "lucide-react";
+import { Menu, ChevronDown, User, LogOut } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 
@@ -30,9 +30,15 @@ export default function Header({ setOpen }: HeaderProps) {
 
   // Dynamic title
   const pageTitle =
-    pathname === "/admin/dashboard"
+    pathname === "/admin/dashboard" || pathname === "/admin/seller"
       ? "Dashboard"
-      : pathname.split("/").pop()?.replace("-", " ");
+      : pathname.startsWith("/admin/seller/products")
+        ? "My products"
+        : pathname.startsWith("/admin/seller/orders")
+          ? "My orders"
+          : pathname === "/admin/profile"
+            ? "Profile"
+            : pathname.split("/").pop()?.replace("-", " ");
 
   const handleProfileClick = () => {
     setOpenDropdown(false);
@@ -40,68 +46,75 @@ export default function Header({ setOpen }: HeaderProps) {
   };
 
   const firstLetter = session?.user?.name?.charAt(0).toUpperCase() || "A";
+  const roleLabel = session?.user?.role === "seller" ? "Seller" : "Admin";
 
   return (
-    <header className="h-16 bg-card border-b border-border flex items-center justify-between px-6">
-      {/* Left */}
-      <div className="flex items-center gap-4">
+    <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center justify-between gap-3 border-b border-[#E5E7EB] bg-white px-4 sm:px-6">
+      <div className="flex min-w-0 items-center gap-3">
         <button
           onClick={() => setOpen(true)}
-          className="md:hidden p-2 rounded-md hover:bg-muted transition"
+          className="rounded-lg p-2 text-[#1F2937] transition hover:bg-[#F7F8FA] md:hidden"
+          aria-label="Open menu"
         >
-          <Menu size={20} />
+          <Menu size={18} />
         </button>
 
-        <h1 className="text-lg font-semibold capitalize">{pageTitle}</h1>
+        <div className="min-w-0">
+          <h1 className="truncate text-[15px] font-semibold capitalize text-[#1F2937]">
+            {pageTitle}
+          </h1>
+          <p className="hidden text-xs text-[#6B7280] sm:block">{roleLabel} workspace</p>
+        </div>
       </div>
 
-      {/* Right */}
       <div className="relative" ref={dropdownRef}>
-        {/* Profile Button */}
         <button
           onClick={() => setOpenDropdown(!openDropdown)}
-          className={`flex items-center gap-3 px-3 py-2 rounded-xl transition
+          className={`flex items-center gap-2.5 rounded-lg border px-2 py-1.5 transition
           ${
             openDropdown
-              ? "bg-primary/10 ring-2 ring-primary"
-              : "hover:bg-muted"
+              ? "border-[#B56A45]/30 bg-[#F8EDE6]"
+              : "border-transparent hover:border-[#E5E7EB] hover:bg-[#F7F8FA]"
           }`}
         >
-          {/* Avatar */}
-          <div className="w-9 h-9 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-semibold">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#B56A45] text-sm font-semibold text-white">
             {firstLetter}
           </div>
 
-          {/* Name */}
-          <span className="hidden sm:block font-medium">
+          <span className="hidden max-w-[10rem] truncate text-sm font-medium text-[#1F2937] sm:block">
             {session?.user?.name}
           </span>
 
-          {/* Chevron */}
           <ChevronDown
-            size={18}
-            className={`transition-transform ${
+            size={16}
+            className={`text-[#6B7280] transition-transform ${
               openDropdown ? "rotate-180" : ""
             }`}
           />
         </button>
 
-        {/* Dropdown */}
         {openDropdown && (
-          <div className="absolute right-0 mt-3 w-56 bg-card border border-border rounded-xl shadow-lg py-2 z-50">
+          <div className="absolute right-0 z-50 mt-2 w-56 overflow-hidden rounded-xl border border-[#E5E7EB] bg-white py-1 shadow-[0_8px_24px_rgba(15,23,42,0.08)]">
+            <div className="border-b border-[#E5E7EB] px-3 py-2.5">
+              <p className="truncate text-sm font-medium text-[#1F2937]">
+                {session?.user?.name}
+              </p>
+              <p className="truncate text-xs text-[#6B7280]">
+                {session?.user?.email || roleLabel}
+              </p>
+            </div>
             <button
               onClick={handleProfileClick}
-              className="w-full text-left px-4 py-2 text-sm hover:bg-muted transition"
+              className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-[#1F2937] transition hover:bg-[#F7F8FA]"
             >
+              <User size={15} className="text-[#6B7280]" />
               Profile
             </button>
-
-            <div className="border-t border-border my-2"></div>
-
             <button
               onClick={() => signOut({ callbackUrl: "/admin/login" })}
-              className="w-full text-left px-4 py-2 text-sm text-destructive hover:bg-muted transition"
+              className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-red-600 transition hover:bg-red-50"
             >
+              <LogOut size={15} />
               Logout
             </button>
           </div>

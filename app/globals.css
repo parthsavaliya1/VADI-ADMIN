@@ -32,6 +32,10 @@
   --color-success: hsl(var(--success));
   --color-success-foreground: hsl(var(--success-foreground));
 
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
@@ -189,6 +193,99 @@ h6 {
   text-wrap: balance;
 }
 
+/* =====================================================
+   Admin + seller console
+   ===================================================== */
+
+.vadi-console {
+  --background: 220 20% 97.6%;
+  --foreground: 215 28% 17%;
+  --card: 0 0% 100%;
+  --card-foreground: 215 28% 17%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 215 28% 17%;
+  --primary: 20 45% 49%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 220 14% 96%;
+  --secondary-foreground: 215 28% 17%;
+  --muted: 220 16% 96%;
+  --muted-foreground: 220 9% 46%;
+  --accent: 24 56% 94%;
+  --accent-foreground: 20 42% 32%;
+  --border: 220 13% 91%;
+  --input: 220 13% 91%;
+  --ring: 20 45% 49%;
+  --radius: 0.625rem;
+  color: #1f2937;
+  background-color: #f7f8fa;
+  font-family: Inter, "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.vadi-console h1,
+.vadi-console h2,
+.vadi-console h3 {
+  color: #1f2937;
+  letter-spacing: -0.025em;
+}
+
+.vadi-console input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+.vadi-console select,
+.vadi-console textarea {
+  border-color: #e5e7eb;
+  background-color: #ffffff;
+  color: #1f2937;
+  border-radius: 0.5rem;
+}
+
+.vadi-console input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):focus,
+.vadi-console select:focus,
+.vadi-console textarea:focus {
+  outline: none;
+  border-color: #b56a45;
+  box-shadow: 0 0 0 3px rgba(181, 106, 69, 0.18);
+}
+
+.vadi-console table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.vadi-console thead th {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #6b7280;
+  background: #f7f8fa;
+}
+
+.vadi-console tbody td {
+  color: #1f2937;
+  vertical-align: middle;
+}
+
+.vadi-console tbody tr {
+  transition: background-color 120ms ease;
+}
+
+.vadi-console tbody tr:hover {
+  background: #f7f8fa;
+}
+
+.vadi-console .bg-card {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  box-shadow: none;
+}
+
+.vadi-console .shadow-sm,
+.vadi-console .shadow-md,
+.vadi-console .hover\:shadow-md:hover {
+  box-shadow: none;
+}
+
 .blur-gate {
   filter: blur(12px);
   transition: filter 0.5s ease-out;
@@ -196,4 +293,41 @@ h6 {
 
 .blur-gate.revealed {
   filter: blur(0);
+}
+
+@keyframes hub-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes hub-swap {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.hub-in {
+  animation: hub-in 560ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hub-swap {
+  animation: hub-swap 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hub-in,
+  .hub-swap {
+    animation: none;
+  }
 }

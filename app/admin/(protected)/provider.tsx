@@ -16,12 +16,12 @@ export default function AdminShell({
 
   return (
     <SessionProvider session={session}>
-      <div className="flex h-screen bg-muted">
+      <div className="vadi-console flex h-screen overflow-hidden bg-[#F7F8FA] text-[#1F2937]">
         <Sidebar open={open} setOpen={setOpen} />
-        <div className="flex-1 flex flex-col">
+        <div className="flex min-w-0 flex-1 flex-col">
           <Header setOpen={setOpen} />
-          <main className="flex-1 p-6 overflow-y-auto">
-            <div className="bg-card p-6 rounded-lg shadow-sm">{children}</div>
+          <main className="min-w-0 flex-1 overflow-y-auto overflow-x-hidden px-4 py-5 sm:px-6 lg:px-8">
+            <div className="mx-auto w-full max-w-[1440px]">{children}</div>
           </main>
         </div>
       </div>

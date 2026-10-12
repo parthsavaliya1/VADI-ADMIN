@@ -129,6 +129,7 @@ function OrderBlock({
 }
 
 export default function DriverDeliveriesPage() {
+  const [assigned, setAssigned] = useState<DeliveryOrder[]>([]);
   const [completed, setCompleted] = useState<DeliveryOrder[]>([]);
   const [pendingAdmin, setPendingAdmin] = useState<DeliveryOrder[]>([]);
   const [loading, setLoading] = useState(true);
@@ -142,7 +143,7 @@ export default function DriverDeliveriesPage() {
         success?: boolean;
         data?:
           | DeliveryOrder[]
-          | { completed?: DeliveryOrder[]; pendingAdmin?: DeliveryOrder[] };
+          | { assigned?: DeliveryOrder[]; completed?: DeliveryOrder[]; pendingAdmin?: DeliveryOrder[] };
         message?: string;
       }>("/api/driver/deliveries");
       if (!data?.success) {
@@ -151,9 +152,11 @@ export default function DriverDeliveriesPage() {
       }
       const payload = data.data;
       if (Array.isArray(payload)) {
+        setAssigned([]);
         setCompleted(payload);
         setPendingAdmin([]);
       } else if (payload && typeof payload === "object") {
+        setAssigned(payload.assigned || []);
         setCompleted(payload.completed || []);
         setPendingAdmin(payload.pendingAdmin || []);
       } else {
@@ -188,6 +191,29 @@ export default function DriverDeliveriesPage() {
         </div>
       ) : (
         <>
+          {assigned.length > 0 ? (
+            <div className="space-y-3">
+              <h2 className="text-lg font-semibold">Assigned to you</h2>
+              <p className="max-w-3xl text-sm text-muted-foreground">
+                A seller assigned these orders to you. When the order is out for delivery, verify the customer code below.
+              </p>
+              <div className="space-y-4">
+                {assigned.map((order) => (
+                  <OrderBlock
+                    key={order._id}
+                    order={order}
+                    dateLabel="Assigned"
+                    badge={
+                      <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+                        Assigned
+                      </span>
+                    }
+                  />
+                ))}
+              </div>
+            </div>
+          ) : null}
+
           {pendingAdmin.length > 0 ? (
             <div className="space-y-3">
               <h2 className="text-lg font-semibold">Waiting for admin</h2>

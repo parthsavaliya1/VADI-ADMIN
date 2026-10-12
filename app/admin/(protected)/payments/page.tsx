@@ -97,19 +97,19 @@ export default function PaymentsClient() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "success":
-        return "bg-green-100 text-green-800";
+        return "bg-emerald-50 text-emerald-700";
       case "pending":
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-amber-50 text-amber-700";
       case "failed":
-        return "bg-red-100 text-red-800";
+        return "bg-red-50 text-red-700";
       case "initiated":
-        return "bg-blue-100 text-blue-800";
+        return "bg-sky-50 text-sky-700";
       case "cancelled":
-        return "bg-gray-100 text-gray-800";
+        return "bg-[#F3F4F6] text-[#6B7280]";
       case "refunded":
-        return "bg-purple-100 text-purple-800";
+        return "bg-violet-50 text-violet-700";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-[#F3F4F6] text-[#6B7280]";
     }
   };
 

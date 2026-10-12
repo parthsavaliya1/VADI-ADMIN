@@ -68,21 +68,21 @@ type Order = {
 /* ── Style maps ── */
 
 const STATUS_STYLES: Record<string, string> = {
-  placed: "bg-yellow-100 text-yellow-800",
-  confirmed: "bg-blue-100 text-blue-800",
-  packed: "bg-orange-100 text-orange-800",
-  out_for_delivery: "bg-purple-100 text-purple-800",
-  shipped: "bg-cyan-100 text-cyan-800",
-  delivered: "bg-green-100 text-green-800",
-  cancelled: "bg-red-100 text-red-800",
-  pending: "bg-yellow-100 text-yellow-800",
+  placed: "bg-amber-50 text-amber-700",
+  confirmed: "bg-sky-50 text-sky-700",
+  packed: "bg-orange-50 text-orange-700",
+  out_for_delivery: "bg-violet-50 text-violet-700",
+  shipped: "bg-cyan-50 text-cyan-700",
+  delivered: "bg-emerald-50 text-emerald-700",
+  cancelled: "bg-red-50 text-red-700",
+  pending: "bg-amber-50 text-amber-700",
 };
 
 const PAYMENT_STATUS_STYLES: Record<string, string> = {
-  success: "bg-green-100 text-green-800",
-  paid: "bg-green-100 text-green-800",
-  pending: "bg-yellow-100 text-yellow-800",
-  failed: "bg-red-100 text-red-800",
+  success: "bg-emerald-50 text-emerald-700",
+  paid: "bg-emerald-50 text-emerald-700",
+  pending: "bg-amber-50 text-amber-700",
+  failed: "bg-red-50 text-red-700",
 };
 
 const ORDER_STATUSES = [

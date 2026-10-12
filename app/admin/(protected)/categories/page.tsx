@@ -22,6 +22,7 @@ type Category = {
   sortOrder: number;
   showOnHome: boolean;
   isActive: boolean;
+  approvalStatus?: string;
   createdAt: string;
   productCount?: number;
 };
@@ -43,6 +44,7 @@ export default function CategoriesClient() {
       const params: any = {
         page: page.toString(),
         limit: "10",
+        includePending: "true",
       };
 
       if (statusFilter === "active") params.isActive = "true";
@@ -66,6 +68,15 @@ export default function CategoriesClient() {
   useEffect(() => {
     fetchCategories();
   }, [page, statusFilter, homeFilter]);
+
+  const setApproval = async (id: string, approvalStatus: "approved" | "rejected") => {
+    try {
+      await API.put(`/api/admin/categories/${id}/approval`, { approvalStatus });
+      fetchCategories();
+    } catch {
+      alert("Failed to update category");
+    }
+  };
 
   const handleDelete = async (id: string, name: string) => {
     if (!confirm(`Deactivate category "${name}"?`)) return;
@@ -176,6 +187,7 @@ export default function CategoriesClient() {
                 <TableHead>Products</TableHead>
                 <TableHead>Sort Order</TableHead>
                 <TableHead>Home</TableHead>
+                <TableHead>Approval</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
@@ -185,14 +197,14 @@ export default function CategoriesClient() {
               {loading ? (
                 [...Array(5)].map((_, i) => (
                   <TableRow key={i}>
-                    <TableCell colSpan={6}>
+                    <TableCell colSpan={7}>
                       <div className="h-16 bg-muted animate-pulse rounded w-full" />
                     </TableCell>
                   </TableRow>
                 ))
               ) : categories.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-10">
+                  <TableCell colSpan={7} className="text-center py-10">
                     No categories found
                   </TableCell>
                 </TableRow>
@@ -221,6 +233,16 @@ export default function CategoriesClient() {
                     <TableCell>{category.sortOrder}</TableCell>
 
                     <TableCell>{category.showOnHome ? "Yes" : "No"}</TableCell>
+
+                    <TableCell>
+                      <span className="capitalize text-xs">{category.approvalStatus || "approved"}</span>
+                      {category.approvalStatus === "pending" ? (
+                        <div className="flex gap-2 mt-2">
+                          <button type="button" onClick={() => setApproval(category._id, "approved")} className="text-xs px-2 py-1 rounded bg-primary text-primary-foreground">Approve</button>
+                          <button type="button" onClick={() => setApproval(category._id, "rejected")} className="text-xs px-2 py-1 rounded border">Reject</button>
+                        </div>
+                      ) : null}
+                    </TableCell>
 
                     <TableCell>
                       {category.isActive ? (

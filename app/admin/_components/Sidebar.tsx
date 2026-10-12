@@ -17,6 +17,7 @@ import {
   LayoutGrid,
   Store,
   Truck,
+  X,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -32,9 +33,10 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
   const isSeller = session?.user?.role === "seller";
 
   const sellerItems = [
-    { name: "My shop", href: "/admin/seller", icon: Store },
+    { name: "Dashboard", href: "/admin/seller", icon: LayoutDashboard },
     { name: "My products", href: "/admin/seller/products", icon: Package },
     { name: "Categories", href: "/admin/seller/categories", icon: FolderTree },
+    { name: "My orders", href: "/admin/seller/orders", icon: ShoppingCart },
   ];
 
   const navItems = [
@@ -105,66 +107,75 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
       {open && (
         <div
           onClick={() => setOpen(false)}
-          className="fixed inset-0 bg-black/40 z-40 md:hidden"
+          className="fixed inset-0 z-40 bg-[#1F2937]/40 md:hidden"
         />
       )}
 
       <aside
-        className={`fixed md:static z-50 top-0 left-0 h-full w-64 
-        bg-card transform transition-transform duration-300 flex flex-col
-        ${open ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}
+        className={`fixed top-0 left-0 z-50 flex h-full w-[min(17.5rem,88vw)] flex-col border-r border-[#E5E7EB] bg-white transition-transform duration-300 md:static md:w-64 md:translate-x-0
+        ${open ? "translate-x-0" : "-translate-x-full"}`}
       >
-        {/* Header */}
-        <div className="p-6">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
-              <Shield size={18} />
+        <div className="flex h-16 shrink-0 items-center justify-between gap-3 border-b border-[#E5E7EB] px-4">
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#F8EDE6] text-[#B56A45]">
+              {isSeller ? <Store size={18} /> : <Shield size={18} />}
             </div>
-            <h2 className="text-lg font-semibold tracking-tight">
-              {isSeller ? "Seller Panel" : "Admin Panel"}
-            </h2>
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold tracking-tight text-[#1F2937]">
+                VADI
+              </p>
+              <p className="truncate text-xs text-[#6B7280]">
+                {isSeller ? "Seller" : "Admin"}
+              </p>
+            </div>
           </div>
-
-          {/* Navigation */}
-          <nav className="space-y-1">
-            {(isSeller ? sellerItems : navItems).map((item) => {
-              const isActive = pathname.startsWith(item.href);
-              const Icon = item.icon;
-
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`relative flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm transition
-                  ${
-                    isActive
-                      ? "bg-primary/10 text-primary font-medium"
-                      : "text-muted-foreground hover:bg-muted"
-                  }`}
-                >
-                  {isActive && (
-                    <span className="absolute left-0 top-0 h-full w-1 bg-primary rounded-r-md" />
-                  )}
-                  <Icon size={18} />
-                  {item.name}
-                </Link>
-              );
-            })}
-          </nav>
+          <button
+            type="button"
+            onClick={() => setOpen(false)}
+            className="rounded-md p-1.5 text-[#6B7280] hover:bg-[#F7F8FA] md:hidden"
+            aria-label="Close menu"
+          >
+            <X size={18} />
+          </button>
         </div>
 
-        {/* User Section */}
-        <div className="mt-auto p-4 bg-muted/30">
-          <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted transition cursor-pointer">
-            <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-semibold">
+        <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-4">
+          {(isSeller ? sellerItems : navItems).map((item) => {
+            const href = item.href.split("#")[0];
+            const isActive = href === "/admin/seller" || href === "/admin/dashboard"
+              ? pathname === href
+              : pathname === href || pathname.startsWith(`${href}/`);
+            const Icon = item.icon;
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setOpen(false)}
+                className={`flex items-center gap-3 rounded-lg px-3 py-2 text-[13.5px] transition-colors
+                ${
+                  isActive
+                    ? "bg-[#F8EDE6] font-medium text-[#B56A45]"
+                    : "text-[#6B7280] hover:bg-[#F7F8FA] hover:text-[#1F2937]"
+                }`}
+              >
+                <Icon size={17} strokeWidth={isActive ? 2.25 : 1.75} />
+                <span className="truncate">{item.name}</span>
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div className="shrink-0 border-t border-[#E5E7EB] p-3">
+          <div className="flex items-center gap-3 rounded-lg px-2 py-2">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#F8EDE6] text-sm font-semibold text-[#B56A45]">
               {firstLetter}
             </div>
-
-            <div className="overflow-hidden">
-              <p className="text-sm font-medium truncate">
+            <div className="min-w-0">
+              <p className="truncate text-sm font-medium text-[#1F2937]">
                 {session?.user?.name}
               </p>
-              <p className="text-xs text-muted-foreground truncate">
+              <p className="truncate text-xs text-[#6B7280]">
                 {session?.user?.email}
               </p>
             </div>

@@ -180,7 +180,7 @@ export default function UsersClient() {
                       className={`inline-flex px-2.5 py-1 rounded-full text-xs font-medium ${
                         user.role === "admin"
                           ? "bg-purple-100 text-purple-800"
-                          : "bg-blue-100 text-blue-800"
+                          : "bg-sky-50 text-sky-700"
                       }`}
                     >
                       {user.role?.toUpperCase() || "USER"}

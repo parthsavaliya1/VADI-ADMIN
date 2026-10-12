@@ -27,13 +27,13 @@ type Order = {
 };
 
 const STATUS_STYLES: Record<string, string> = {
-  placed: "bg-yellow-100 text-yellow-700",
-  confirmed: "bg-blue-100 text-blue-700",
-  packed: "bg-orange-100 text-orange-700",
-  shipped: "bg-cyan-100 text-cyan-700",
-  out_for_delivery: "bg-purple-100 text-purple-700",
-  delivered: "bg-green-100 text-green-700",
-  cancelled: "bg-red-100 text-red-700",
+  placed: "bg-amber-50 text-amber-700",
+  confirmed: "bg-sky-50 text-sky-700",
+  packed: "bg-orange-50 text-orange-700",
+  shipped: "bg-cyan-50 text-cyan-700",
+  out_for_delivery: "bg-violet-50 text-violet-700",
+  delivered: "bg-emerald-50 text-emerald-700",
+  cancelled: "bg-red-50 text-red-700",
 };
 
 export default function OrdersClient() {

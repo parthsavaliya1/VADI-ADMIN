@@ -128,7 +128,7 @@ export default function UserDetailClient({ userId }: { userId: string }) {
                     className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${
                       user.role === "admin"
                         ? "bg-purple-100 text-purple-800"
-                        : "bg-blue-100 text-blue-800"
+                        : "bg-sky-50 text-sky-700"
                     }`}
                   >
                     <Shield className="h-3.5 w-3.5" />
@@ -208,7 +208,7 @@ export default function UserDetailClient({ userId }: { userId: string }) {
                   className={`px-3 py-1 rounded-full text-xs font-medium ${
                     user.role === "admin"
                       ? "bg-purple-100 text-purple-800"
-                      : "bg-blue-100 text-blue-800"
+                      : "bg-sky-50 text-sky-700"
                   }`}
                 >
                   {user.role?.toUpperCase() || "REGULAR USER"}

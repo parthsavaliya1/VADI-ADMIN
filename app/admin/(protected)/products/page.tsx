@@ -335,7 +335,7 @@ export default function ProductsClient() {
                     >
                       <TableCell className="min-w-[250px]">
                         <div className="flex items-center gap-3">
-                          <div className="w-14 h-14 rounded-lg overflow-hidden bg-muted flex-shrink-0">
+                          <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg border border-[#E5E7EB] bg-[#F7F8FA]">
                             {product.image ? (
                               <img
                                 src={product.image}
@@ -361,7 +361,7 @@ export default function ProductsClient() {
                         </div>
                       </TableCell>
                       <TableCell className="whitespace-nowrap">
-                        <span className="inline-flex px-2.5 py-1 rounded-md bg-primary text-primary-foreground font-medium">
+                        <span className="inline-flex rounded-md bg-[#E8F5E9] px-2 py-0.5 text-xs font-medium text-[#2E7D32]">
                           {product.category?.name || "N/A"}
                         </span>
                       </TableCell>
@@ -371,7 +371,7 @@ export default function ProductsClient() {
                         )}
                       </TableCell>
                       <TableCell className="whitespace-nowrap">
-                        <div className="font-semibold text-green-600 dark:text-green-400">
+                        <div className="font-semibold text-[#1F2937]">
                           ₹{defaultVariant?.price?.toLocaleString?.() || 0}
                         </div>
                         {defaultVariant &&
@@ -383,13 +383,13 @@ export default function ProductsClient() {
                       </TableCell>
                       <TableCell className="whitespace-nowrap">
                         <span
-                          className={`inline-flex px-2.5 py-1 rounded-full text-xs font-medium
+                          className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium
                           ${
                             (defaultVariant?.stock || 0) > 20
-                              ? "bg-primary text-primary-foreground"
+                              ? "bg-[#E8F5E9] text-[#2E7D32]"
                               : (defaultVariant?.stock || 0) > 0
-                                ? "bg-primary text-primary-foreground"
-                                : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
+                                ? "bg-amber-50 text-amber-700"
+                                : "bg-red-50 text-red-700"
                           }`}
                         >
                           {defaultVariant?.stock || 0} units
@@ -398,16 +398,16 @@ export default function ProductsClient() {
                       <TableCell className="whitespace-nowrap">
                         <div className="flex flex-col gap-1.5">
                           {product.approvalStatus === "pending" && (
-                            <span className="inline-flex px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 w-fit">
+                            <span className="inline-flex w-fit rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700">
                               Pending approval
                             </span>
                           )}
                           {product.isActive ? (
-                            <span className="inline-flex px-2.5 py-1 rounded-full text-xs font-medium bg-primary text-primary-foreground w-fit">
+                            <span className="inline-flex w-fit rounded-full bg-[#E8F5E9] px-2 py-0.5 text-xs font-medium text-[#2E7D32]">
                               Active
                             </span>
                           ) : (
-                            <span className="inline-flex px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400 w-fit">
+                            <span className="inline-flex w-fit rounded-full bg-[#F3F4F6] px-2 py-0.5 text-xs font-medium text-[#6B7280]">
                               Inactive
                             </span>
                           )}
@@ -458,7 +458,7 @@ export default function ProductsClient() {
                           )}
                           <Link
                             href={`/admin/products/edit/${product._id}`}
-                            className="p-2 bg-primary text-primary-foreground rounded-lg transition"
+                            className="rounded-lg border border-[#E5E7EB] p-2 text-[#1F2937] transition hover:bg-[#F7F8FA]"
                             title="Edit Product"
                           >
                             <Edit2 className="h-4 w-4" />

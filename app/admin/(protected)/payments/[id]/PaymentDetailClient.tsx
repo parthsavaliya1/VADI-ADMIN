@@ -49,13 +49,13 @@ type Payment = {
 /* ── Style maps ── */
 
 const STATUS_STYLES: Record<string, string> = {
-  success: "bg-green-100 text-green-800",
-  pending: "bg-yellow-100 text-yellow-800",
-  failed: "bg-red-100 text-red-800",
-  initiated: "bg-blue-100 text-blue-800",
-  cancelled: "bg-gray-100 text-gray-800",
-  refunded: "bg-purple-100 text-purple-800",
-  partial_refund: "bg-orange-100 text-orange-800",
+  success: "bg-emerald-50 text-emerald-700",
+  pending: "bg-amber-50 text-amber-700",
+  failed: "bg-red-50 text-red-700",
+  initiated: "bg-sky-50 text-sky-700",
+  cancelled: "bg-[#F3F4F6] text-[#6B7280]",
+  refunded: "bg-violet-50 text-violet-700",
+  partial_refund: "bg-orange-50 text-orange-700",
 };
 
 function StatusIcon({ status }: { status: string }) {

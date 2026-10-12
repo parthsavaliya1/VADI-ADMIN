@@ -57,7 +57,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-secondary/40 px-4">
+    <div className="vadi-console flex min-h-screen items-center justify-center bg-[#F7F8FA] px-4">
       <div className="w-full max-w-md">
         {/* Logo / Heading */}
         <div className="text-center mb-8">
@@ -75,21 +75,21 @@ export default function LoginPage() {
           <button
             type="button"
             onClick={() => { setMode("admin"); setError(""); }}
-            className={`py-2 rounded-md text-sm font-medium border ${mode === "admin" ? "bg-primary text-primary-foreground" : "bg-card"}`}
+            className={`rounded-lg border py-2 text-sm font-medium ${mode === "admin" ? "border-[#B56A45] bg-[#B56A45] text-white" : "border-[#E5E7EB] bg-white text-[#1F2937]"}`}
           >
             Admin
           </button>
           <button
             type="button"
             onClick={() => { setMode("seller"); setError(""); }}
-            className={`py-2 rounded-md text-sm font-medium border ${mode === "seller" ? "bg-primary text-primary-foreground" : "bg-card"}`}
+            className={`rounded-lg border py-2 text-sm font-medium ${mode === "seller" ? "border-[#B56A45] bg-[#B56A45] text-white" : "border-[#E5E7EB] bg-white text-[#1F2937]"}`}
           >
             Seller
           </button>
         </div>
 
         {/* Card */}
-        <div className="bg-card border border-border rounded-xl shadow-sm p-8">
+        <div className="rounded-xl border border-[#E5E7EB] bg-white p-6 sm:p-8">
           {error && (
             <div className="mb-5 bg-destructive/10 text-destructive text-sm px-4 py-2 rounded-md">
               {error}
@@ -146,9 +146,9 @@ export default function LoginPage() {
           <button
             onClick={handleLogin}
             disabled={loading}
-            className="w-full bg-primary text-primary-foreground py-2.5 rounded-md
-                       font-medium hover:opacity-90 active:scale-[0.98]
-                       transition-all disabled:opacity-60"
+            className="w-full rounded-lg bg-[#B56A45] py-2.5 font-medium text-white
+                       transition hover:bg-[#9A5436] active:scale-[0.98]
+                       disabled:opacity-60"
           >
             {loading ? "Signing in..." : "Sign In"}
           </button>
