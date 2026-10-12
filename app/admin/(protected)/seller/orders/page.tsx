@@ -14,6 +14,13 @@ type Order = {
   user?: { name?: string; phone?: string };
   assignedDriver?: { _id: string; name?: string; phone?: string } | null;
   items: { productName: string; quantity: number; seller?: { sellerId?: string } }[];
+  sellerShare?: {
+    gross: number;
+    commissionPercent: number;
+    commissionAmount: number;
+    sellerAmount: number;
+    credited: boolean;
+  };
 };
 
 const NEXT_STATUS = ["confirmed", "packed", "shipped", "out_for_delivery", "cancelled"];
@@ -79,7 +86,11 @@ export default function SellerOrdersPage() {
                 <div>
                   <p className="font-medium">#{order.orderNumber}</p>
                   <p className="text-xs text-muted-foreground">
-                    {order.user?.name || "Customer"} · {order.user?.phone || ""} · ₹{Number(order.grandTotal).toLocaleString("en-IN")}
+                    {order.user?.name || "Customer"} · {order.user?.phone || ""}
+                    {order.sellerShare
+                      ? ` · You receive ₹${Number(order.sellerShare.sellerAmount).toLocaleString("en-IN")} (commission ₹${Number(order.sellerShare.commissionAmount).toLocaleString("en-IN")} at ${order.sellerShare.commissionPercent}%)`
+                      : ` · ₹${Number(order.grandTotal).toLocaleString("en-IN")}`}
+                    {order.sellerShare ? (order.sellerShare.credited ? " · credited" : " · waiting for payment") : ""}
                   </p>
                 </div>
                 <span className="rounded-full bg-[#E8F5E9] px-2 py-1 text-xs font-medium capitalize text-[#2E7D32]">

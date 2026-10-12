@@ -8,6 +8,10 @@ import API from "@/lib/api";
 type Stats = {
   totalOrders: number;
   totalRevenue: number;
+  grossSales?: number;
+  commissionAmount?: number;
+  sellerEarnings?: number;
+  commissionPercent?: number;
   totalProducts: number;
   totalCategories: number;
   todayOrders: number;
@@ -47,10 +51,16 @@ export default function SellerDashboardPage() {
       change: `${stats?.todayOrders || 0} today`,
     },
     {
-      title: "Total Revenue",
-      value: `₹${(stats?.totalRevenue || 0).toLocaleString()}`,
+      title: "Your earnings",
+      value: `₹${(stats?.sellerEarnings ?? stats?.totalRevenue ?? 0).toLocaleString("en-IN")}`,
       icon: DollarSign,
-      change: `₹${(stats?.monthlyRevenue || 0).toLocaleString()} this month`,
+      change: `₹${(stats?.monthlyRevenue || 0).toLocaleString("en-IN")} this month after commission`,
+    },
+    {
+      title: "Commission to platform",
+      value: `₹${(stats?.commissionAmount || 0).toLocaleString("en-IN")}`,
+      icon: DollarSign,
+      change: `${stats?.commissionPercent ?? 10}% of your product sales`,
     },
     {
       title: "Total Products",

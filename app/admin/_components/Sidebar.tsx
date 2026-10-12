@@ -10,6 +10,7 @@ import {
   Package,
   ShoppingCart,
   CreditCard,
+  Percent,
   FolderTree,
   BellRing,
   Image as ImageIcon,
@@ -37,6 +38,7 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
     { name: "My products", href: "/admin/seller/products", icon: Package },
     { name: "Categories", href: "/admin/seller/categories", icon: FolderTree },
     { name: "My orders", href: "/admin/seller/orders", icon: ShoppingCart },
+    { name: "Earnings", href: "/admin/seller/earnings", icon: CreditCard },
   ];
 
   const navItems = [
@@ -64,6 +66,11 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
       name: "Payments",
       href: "/admin/payments",
       icon: CreditCard,
+    },
+    {
+      name: "Payment rules",
+      href: "/admin/commission",
+      icon: Percent,
     },
     {
       name: "Users",

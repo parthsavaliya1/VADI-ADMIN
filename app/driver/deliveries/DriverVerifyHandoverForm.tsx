@@ -5,10 +5,14 @@ import { useState } from "react";
 
 export default function DriverVerifyHandoverForm({
   onVerified,
+  orderNumber,
+  compact = false,
 }: {
   onVerified?: () => void;
+  orderNumber?: string;
+  compact?: boolean;
 }) {
-  const [orderId, setOrderId] = useState("");
+  const [orderId, setOrderId] = useState(orderNumber || "");
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState("");
@@ -53,24 +57,31 @@ export default function DriverVerifyHandoverForm({
   };
 
   return (
-    <div className="rounded-lg border bg-card p-5 space-y-4 max-w-xl">
+    <div className={`space-y-4 rounded-lg border bg-card p-5 ${compact ? "" : "max-w-xl"}`}>
       <div>
         <h2 className="font-semibold">Verify customer code</h2>
-        <p className="text-xs text-muted-foreground mt-1">
-          When the order is <strong>Out for delivery</strong>, enter the customer&apos;s
-          6-digit code from their app. A correct code <strong>marks the order as
-          delivered</strong> immediately (COD payment is completed the same way as
-          in admin).
-        </p>
+        {!compact ? (
+          <p className="mt-1 text-xs text-muted-foreground">
+            When the order is <strong>Out for delivery</strong>, enter the customer&apos;s
+            6-digit code from their app. A correct code <strong>marks the order as
+            delivered</strong> immediately (COD payment is completed the same way as
+            in admin).
+          </p>
+        ) : (
+          <p className="mt-1 text-xs text-muted-foreground">
+            Enter the 6-digit code shown on the customer&apos;s track-order screen.
+          </p>
+        )}
       </div>
       <div>
         <label className="text-xs font-medium uppercase text-muted-foreground">
           Order number or ID
         </label>
         <input
-          className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm font-mono"
+          className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 font-mono text-sm"
           placeholder="e.g. ORD23908068615 or 24-char ID from admin URL"
           value={orderId}
+          readOnly={Boolean(orderNumber)}
           onChange={(e) => setOrderId(e.target.value)}
         />
       </div>

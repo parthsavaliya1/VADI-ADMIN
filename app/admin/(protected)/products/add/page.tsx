@@ -36,6 +36,7 @@ type Variant = {
   stock: number;
   lowStockThreshold: number;
   sku: string;
+  image: string;
   isDefault: boolean;
   isActive: boolean;
 };
@@ -86,6 +87,7 @@ export default function AddProductClient() {
       stock: 0,
       lowStockThreshold: 5,
       sku: "",
+      image: "",
       isDefault: true,
       isActive: true,
     },
@@ -216,10 +218,27 @@ export default function AddProductClient() {
         stock: 0,
         lowStockThreshold: 5,
         sku: "",
+        image: "",
         isDefault: false,
         isActive: true,
       },
     ]);
+  };
+
+  const handleVariantImageUpload = async (
+    index: number,
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const url = await uploadImageToSupabase(file);
+      if (url) updateVariant(index, "image", url);
+    } finally {
+      setUploading(false);
+      e.target.value = "";
+    }
   };
 
   const removeVariant = (index: number) => {
@@ -388,6 +407,7 @@ export default function AddProductClient() {
           price: Number(variant.price),
           stock: Number(variant.stock),
           lowStockThreshold: Number(variant.lowStockThreshold),
+          image: variant.image || "",
         })),
       };
 
@@ -748,6 +768,43 @@ export default function AddProductClient() {
                                      focus:outline-none focus:ring-2 focus:ring-primary/50 transition text-sm"
                           />
                         </div>
+                      </div>
+
+                      <div className="mt-4">
+                        <label className="block text-xs font-medium mb-1.5 text-muted-foreground">
+                          Variant image
+                        </label>
+                        <p className="text-xs text-muted-foreground mb-2">
+                          Shown on the product page when this size is selected.
+                        </p>
+                        {variant.image ? (
+                          <div className="flex items-center gap-3">
+                            <img
+                              src={variant.image}
+                              alt={`${variant.packSize}${variant.packUnit}`}
+                              className="h-16 w-16 rounded-lg object-cover border"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => updateVariant(index, "image", "")}
+                              className="text-sm text-red-600 hover:underline"
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        ) : (
+                          <label className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border bg-background text-sm cursor-pointer hover:border-primary/50">
+                            <Upload className="h-4 w-4" />
+                            Add image
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              disabled={uploading}
+                              onChange={(e) => handleVariantImageUpload(index, e)}
+                            />
+                          </label>
+                        )}
                       </div>
                     </div>
                   ))}
