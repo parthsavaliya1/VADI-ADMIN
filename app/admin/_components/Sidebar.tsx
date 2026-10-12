@@ -15,6 +15,7 @@ import {
   Image as ImageIcon,
   Timer,
   LayoutGrid,
+  Store,
   Truck,
 } from "lucide-react";
 
@@ -28,6 +29,13 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
   const { data: session } = useSession();
 
   const firstLetter = session?.user?.name?.charAt(0).toUpperCase() || "A";
+  const isSeller = session?.user?.role === "seller";
+
+  const sellerItems = [
+    { name: "My shop", href: "/admin/seller", icon: Store },
+    { name: "My products", href: "/admin/seller/products", icon: Package },
+    { name: "Categories", href: "/admin/seller/categories", icon: FolderTree },
+  ];
 
   const navItems = [
     {
@@ -61,7 +69,12 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
       icon: Users,
     },
     {
-      name: "Drivers",
+      name: "Sellers",
+      href: "/admin/sellers",
+      icon: Store,
+    },
+    {
+      name: "Staff",
       href: "/admin/drivers",
       icon: Truck,
     },
@@ -108,13 +121,13 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
               <Shield size={18} />
             </div>
             <h2 className="text-lg font-semibold tracking-tight">
-              Admin Panel
+              {isSeller ? "Seller Panel" : "Admin Panel"}
             </h2>
           </div>
 
           {/* Navigation */}
           <nav className="space-y-1">
-            {navItems.map((item) => {
+            {(isSeller ? sellerItems : navItems).map((item) => {
               const isActive = pathname.startsWith(item.href);
               const Icon = item.icon;
 

@@ -31,7 +31,7 @@ export default function EditCategoryClient({
   const fetchCategory = async () => {
     try {
       setFetching(true);
-      const { data } = await API.get(`/categories/${categoryId}`);
+      const { data } = await API.get(`/api/admin/categories/${categoryId}`);
 
       if (data.success && data.data) {
         const category = data.data;
@@ -95,7 +95,7 @@ export default function EditCategoryClient({
     setLoading(true);
 
     try {
-      const { data } = await API.put(`/categories/${categoryId}`, {
+      const { data } = await API.put(`/api/admin/categories/${categoryId}`, {
         ...formData,
         sortOrder: Number(formData.sortOrder),
       });

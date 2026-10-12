@@ -38,6 +38,7 @@ type Product = {
   trending: boolean;
   bestDeal: boolean;
   isActive: boolean;
+  approvalStatus?: "pending" | "approved" | "rejected";
   createdAt: string;
 };
 
@@ -72,11 +73,12 @@ export default function ProductsClient() {
 
       if (statusFilter === "active") params.isActive = "true";
       else if (statusFilter === "inactive") params.isActive = "false";
+      else if (statusFilter === "pending") params.approvalStatus = "pending";
       else if (statusFilter === "featured") params.featured = "true";
       else if (statusFilter === "trending") params.trending = "true";
       else if (statusFilter === "bestDeal") params.bestDeal = "true";
 
-      const { data } = await API.get("/products", { params });
+      const { data } = await API.get("/api/admin/products", { params });
 
       setProducts(data.data || []);
       setTotalPages(data.pagination?.pages || 1);
@@ -90,7 +92,7 @@ export default function ProductsClient() {
 
   const fetchCategories = async () => {
     try {
-      const { data } = await API.get("/categories", {
+      const { data } = await API.get("/api/admin/categories", {
         params: { isActive: "true" },
       });
       if (data.success) {
@@ -109,11 +111,24 @@ export default function ProductsClient() {
     fetchProducts();
   }, [search, categoryFilter, statusFilter, page]);
 
+  const handleApprove = async (id: string, approvalStatus: "approved" | "rejected") => {
+    try {
+      const { data } = await API.put(`/api/admin/products/${id}/approval`, {
+        approvalStatus,
+      });
+      if (!data?.success) throw new Error(data?.message || "Failed to update product");
+      fetchProducts();
+    } catch (error) {
+      console.error("Approval error:", error);
+      alert("Failed to update product approval");
+    }
+  };
+
   const handleDelete = async (id: string, name: string) => {
     if (!confirm(`Are you sure you want to deactivate "${name}"?`)) return;
 
     try {
-      const { data } = await API.delete(`/products/${id}`);
+      const { data } = await API.delete(`/api/admin/products/${id}`);
       if (!data?.success) {
         throw new Error(data?.message || "Failed to deactivate product");
       }
@@ -237,6 +252,7 @@ export default function ProductsClient() {
             <option value="all">All Status</option>
             <option value="active">Active Only</option>
             <option value="inactive">Inactive Only</option>
+            <option value="pending">Pending approval</option>
             <option value="featured">Featured</option>
             <option value="trending">Trending</option>
             <option value="bestDeal">Best Deals</option>
@@ -381,6 +397,11 @@ export default function ProductsClient() {
                       </TableCell>
                       <TableCell className="whitespace-nowrap">
                         <div className="flex flex-col gap-1.5">
+                          {product.approvalStatus === "pending" && (
+                            <span className="inline-flex px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 w-fit">
+                              Pending approval
+                            </span>
+                          )}
                           {product.isActive ? (
                             <span className="inline-flex px-2.5 py-1 rounded-full text-xs font-medium bg-primary text-primary-foreground w-fit">
                               Active
@@ -427,6 +448,14 @@ export default function ProductsClient() {
                           >
                             <Eye className="h-4 w-4" />
                           </Link> */}
+                          {product.approvalStatus === "pending" && (
+                            <button
+                              onClick={() => handleApprove(product._id, "approved")}
+                              className="px-2 py-1 text-xs rounded-lg bg-primary text-primary-foreground"
+                            >
+                              Approve
+                            </button>
+                          )}
                           <Link
                             href={`/admin/products/edit/${product._id}`}
                             className="p-2 bg-primary text-primary-foreground rounded-lg transition"

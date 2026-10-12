@@ -97,7 +97,7 @@ export default function EditProductClient({
   const fetchProduct = async () => {
     setFetching(true);
     try {
-      const { data } = await API.get(`/products/${productId}`);
+      const { data } = await API.get(`/api/admin/products/${productId}`);
       if (data.success && data.data) {
         const product = data.data;
 
@@ -150,7 +150,7 @@ export default function EditProductClient({
 
   const fetchCategories = async () => {
     try {
-      const { data } = await API.get("/categories", {
+      const { data } = await API.get("/api/admin/categories", {
         params: { isActive: "true" },
       });
       if (data.success) {
@@ -163,7 +163,7 @@ export default function EditProductClient({
 
   const fetchSellers = async () => {
     try {
-      const { data } = await API.get("/sellers", {
+      const { data } = await API.get("/api/admin/sellers", {
         params: { isActive: "true", sortBy: "name", sortOrder: "asc" },
       });
       if (data.success) {
@@ -434,7 +434,7 @@ export default function EditProductClient({
         })),
       };
 
-      const { data } = await API.put(`/products/${productId}`, payload);
+      const { data } = await API.put(`/api/admin/products/${productId}`, payload);
 
       if (data.success) {
         router.push("/admin/products");

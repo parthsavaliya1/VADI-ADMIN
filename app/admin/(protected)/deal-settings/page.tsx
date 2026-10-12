@@ -13,7 +13,7 @@ export default function DealSettingsPage() {
   useEffect(() => {
     const fetchDealSettings = async () => {
       try {
-        const { data } = await API.get("/deal-settings");
+        const { data } = await API.get("/api/admin/deal-settings");
         const settings = data?.data;
 
         if (settings?.dealEndsAt) {
@@ -50,7 +50,7 @@ export default function DealSettingsPage() {
         payloadDealEndsAt = parsed.toISOString();
       }
 
-      const { data } = await API.put("/deal-settings", {
+      const { data } = await API.put("/api/admin/deal-settings", {
         dealEndsAt: payloadDealEndsAt,
         isActive,
       });

@@ -117,9 +117,9 @@ export default function DriversPage() {
     <div className="space-y-4 md:space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold md:text-3xl">Drivers</h1>
+          <h1 className="text-2xl font-bold md:text-3xl">Staff</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Register delivery drivers by phone. They sign in with OTP at{" "}
+            Add a rider by phone. When an order is out for delivery, the customer gets a 6-digit code in the app and by SMS. The rider asks for that code and enters it to complete the delivery. Staff sign in with OTP at{" "}
             <Link
               href="/driver/login"
               className="font-medium text-primary underline-offset-2 hover:underline"
@@ -140,7 +140,7 @@ export default function DriversPage() {
       <div className="rounded-xl border bg-card p-5 shadow-sm md:p-6">
         <div className="mb-4 flex items-center gap-2">
           <Truck className="h-5 w-5 text-primary" aria-hidden />
-          <h2 className="text-lg font-semibold">Add driver</h2>
+          <h2 className="text-lg font-semibold">Add staff</h2>
         </div>
         <form onSubmit={onCreate} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <div className="space-y-2">
@@ -167,7 +167,7 @@ export default function DriversPage() {
           <div className="flex items-end gap-2">
             <Button type="submit" disabled={submitting} className="gap-2">
               <Plus className="h-4 w-4" />
-              {submitting ? "Saving…" : "Add driver"}
+              {submitting ? "Saving…" : "Add staff"}
             </Button>
           </div>
         </form>
@@ -207,8 +207,8 @@ export default function DriversPage() {
           <div className="flex flex-col items-center justify-center gap-2 py-12 text-center">
             <p className="text-muted-foreground">
               {drivers.length === 0
-                ? "No drivers yet. Add one above."
-                : "No drivers match your search."}
+                ? "No staff yet. Add one above."
+                : "No staff match your search."}
             </p>
           </div>
         ) : (
@@ -270,7 +270,7 @@ export default function DriversPage() {
       </div>
 
       <p className="text-xs text-muted-foreground">
-        Total drivers: {drivers.length}
+        Total staff: {drivers.length}
         {search.trim() ? ` · Showing ${filtered.length}` : null}
       </p>
     </div>

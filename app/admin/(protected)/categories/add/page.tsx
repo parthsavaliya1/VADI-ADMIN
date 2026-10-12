@@ -57,7 +57,7 @@ export default function AddCategoryClient() {
     setLoading(true);
 
     try {
-      const { data } = await API.post("/categories", {
+      const { data } = await API.post("/api/admin/categories", {
         ...formData,
         sortOrder: Number(formData.sortOrder),
       });

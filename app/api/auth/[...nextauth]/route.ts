@@ -8,11 +8,12 @@ const BACKEND_URL =
 
 type AuthUser = {
   id: string;
-  role: "admin" | "driver";
+  role: "admin" | "driver" | "seller";
   accessToken?: string;
   email?: string;
   name?: string;
   phone?: string;
+  userId?: string;
 };
 
 export const authOptions: NextAuthOptions = {
@@ -75,6 +76,35 @@ export const authOptions: NextAuthOptions = {
         } satisfies AuthUser;
       },
     }),
+    CredentialsProvider({
+      id: "seller-credentials",
+      name: "Seller",
+      credentials: {
+        phone: { label: "Phone", type: "text" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        const res = await fetch(`${BACKEND_URL}/sellers/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            phone: credentials?.phone,
+            password: credentials?.password,
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success || !data.token || !data.seller) return null;
+        return {
+          id: String(data.seller.id),
+          role: "seller",
+          phone: data.seller.phone,
+          name: data.seller.name || "Seller",
+          email: data.seller.email,
+          accessToken: data.token,
+          userId: data.seller.userId ? String(data.seller.userId) : undefined,
+        } satisfies AuthUser;
+      },
+    }),
   ],
 
   pages: {
@@ -95,6 +125,7 @@ export const authOptions: NextAuthOptions = {
         token.email = authUser.email;
         token.name = authUser.name;
         token.phone = authUser.phone;
+        token.userId = authUser.userId;
       }
       if (!token.role && token.id === "admin") {
         token.role = "admin";
@@ -105,13 +136,16 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
-        session.user.role = token.role as "admin" | "driver";
+        session.user.role = token.role as "admin" | "driver" | "seller";
         session.user.name = (token.name as string) || session.user.name || "";
         session.user.email =
           (token.email as string) ||
-          (token.role === "driver" ? (token.phone as string) : "") ||
+          (token.role === "driver" || token.role === "seller"
+            ? (token.phone as string)
+            : "") ||
           "";
         session.user.phone = token.phone as string | undefined;
+        session.user.userId = token.userId as string | undefined;
       }
       session.accessToken = token.accessToken as string;
       return session;

@@ -5,6 +5,9 @@ import { Loader2, Plus, Trash2, Upload } from "lucide-react";
 import API from "@/lib/api";
 import { uploadImageToSupabase } from "@/lib/upload";
 
+const BANNER_WIDTH = 1080;
+const BANNER_HEIGHT = 352;
+
 type BannerItem = {
   _id: string;
   title: string;
@@ -12,6 +15,24 @@ type BannerItem = {
   sortOrder: number;
   isActive: boolean;
 };
+
+async function fitBannerFile(file: File): Promise<File> {
+  const bitmap = await createImageBitmap(file);
+  const canvas = document.createElement("canvas");
+  canvas.width = BANNER_WIDTH;
+  canvas.height = BANNER_HEIGHT;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return file;
+  const scale = Math.max(BANNER_WIDTH / bitmap.width, BANNER_HEIGHT / bitmap.height);
+  const dw = bitmap.width * scale;
+  const dh = bitmap.height * scale;
+  ctx.drawImage(bitmap, (BANNER_WIDTH - dw) / 2, (BANNER_HEIGHT - dh) / 2, dw, dh);
+  const blob = await new Promise<Blob | null>((resolve) =>
+    canvas.toBlob(resolve, "image/jpeg", 0.92),
+  );
+  if (!blob) return file;
+  return new File([blob], "banner.jpg", { type: "image/jpeg" });
+}
 
 export default function BannerPage() {
   const [title, setTitle] = useState("");
@@ -45,7 +66,8 @@ export default function BannerPage() {
     if (!file) return;
     setUploading(true);
     try {
-      const url = await uploadImageToSupabase(file, "banner");
+      const fitted = await fitBannerFile(file);
+      const url = await uploadImageToSupabase(fitted, "banner");
       if (url) setImage(url);
     } finally {
       setUploading(false);
@@ -91,7 +113,7 @@ export default function BannerPage() {
       <div>
         <h1 className="text-2xl md:text-3xl font-bold">Banner</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Upload dynamic home banners using Bunny CDN
+          Home banners are 1080 × 352 px. That is the same shape as the app banner, which is 128 px tall. Uploads are cropped to this size.
         </p>
       </div>
 
@@ -130,7 +152,15 @@ export default function BannerPage() {
             />
           </label>
           {uploading && (
-            <p className="text-xs text-blue-600 mt-2">Uploading to Bunny...</p>
+            <p className="text-xs text-blue-600 mt-2">Cropping to 1080 × 352 and uploading...</p>
+          )}
+          {image && (
+            <img
+              src={image}
+              alt="Banner preview"
+              className="mt-3 w-full rounded-2xl object-cover border"
+              style={{ aspectRatio: "1080 / 352", height: "auto" }}
+            />
           )}
         </div>
 
@@ -190,7 +220,8 @@ export default function BannerPage() {
                   <img
                     src={banner.image}
                     alt={banner.title || "banner"}
-                    className="w-24 h-14 rounded object-cover border"
+                    className="w-40 rounded-xl object-cover border"
+                    style={{ aspectRatio: "1080 / 352", height: "auto" }}
                   />
                   <div>
                     <p className="font-medium">{banner.title || "Untitled"}</p>

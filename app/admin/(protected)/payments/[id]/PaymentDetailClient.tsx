@@ -84,7 +84,7 @@ export default function PaymentDetailClient({
   useEffect(() => {
     const fetchPayment = async () => {
       try {
-        const { data } = await API.get(`/payments/${paymentId}`);
+        const { data } = await API.get(`/api/admin/payments/${paymentId}`);
         if (data.success) setPayment(data.data);
       } catch (error) {
         console.error("Fetch payment error:", error);
@@ -100,7 +100,7 @@ export default function PaymentDetailClient({
     if (!payment) return;
     setCollecting(true);
     try {
-      const { data } = await API.post(`/payments/${paymentId}/collect-cod`, {});
+      const { data } = await API.post(`/api/admin/payments/${paymentId}/collect-cod`, {});
       if (data.success) {
         setPayment({
           ...payment,

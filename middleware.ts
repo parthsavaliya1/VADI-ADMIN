@@ -9,6 +9,7 @@ const ADMIN_AREA_PREFIXES = [
   "/admin/orders",
   "/admin/payments",
   "/admin/users",
+  "/admin/sellers",
   "/admin/drivers",
   "/admin/notifications",
   "/admin/banner",
@@ -27,6 +28,7 @@ export async function middleware(req: NextRequest) {
 
   const isDriverDeliveries =
     pathname === "/driver/deliveries" || pathname.startsWith("/driver/deliveries/");
+  const isSellerArea = pathname === "/admin/seller" || pathname.startsWith("/admin/seller/");
   const isAdminArea = ADMIN_AREA_PREFIXES.some((p) => pathname.startsWith(p));
 
   if (isDriverDeliveries) {
@@ -39,12 +41,25 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
+  if (isSellerArea) {
+    if (!token) {
+      return NextResponse.redirect(new URL("/admin/login", req.url));
+    }
+    if (token.role !== "seller" && token.role !== "admin") {
+      return NextResponse.redirect(new URL("/admin/login", req.url));
+    }
+    return NextResponse.next();
+  }
+
   if (isAdminArea) {
     if (!token) {
       return NextResponse.redirect(new URL("/admin/login", req.url));
     }
     if (token.role === "driver") {
       return NextResponse.redirect(new URL("/driver/deliveries", req.url));
+    }
+    if (token.role === "seller") {
+      return NextResponse.redirect(new URL("/admin/seller", req.url));
     }
     return NextResponse.next();
   }
@@ -60,6 +75,9 @@ export const config = {
     "/admin/orders/:path*",
     "/admin/payments/:path*",
     "/admin/users/:path*",
+    "/admin/sellers/:path*",
+    "/admin/seller",
+    "/admin/seller/:path*",
     "/admin/drivers/:path*",
     "/admin/notifications/:path*",
     "/admin/banner/:path*",

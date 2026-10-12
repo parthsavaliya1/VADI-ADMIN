@@ -51,7 +51,7 @@ export default function CategoriesClient() {
       if (homeFilter === "home") params.showOnHome = "true";
       if (homeFilter === "notHome") params.showOnHome = "false";
 
-      const { data } = await API.get("/categories", { params });
+      const { data } = await API.get("/api/admin/categories", { params });
 
       setCategories(data.data || []);
       setTotalPages(data.pagination?.pages || 1);
@@ -70,7 +70,7 @@ export default function CategoriesClient() {
   const handleDelete = async (id: string, name: string) => {
     if (!confirm(`Deactivate category "${name}"?`)) return;
     try {
-      await API.delete(`/categories/${id}`);
+      await API.delete(`/api/admin/categories/${id}`);
       fetchCategories();
     } catch (error) {
       console.error("Delete error:", error);

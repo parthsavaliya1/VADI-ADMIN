@@ -72,13 +72,13 @@ export default function PaymentsClient() {
       const params: any = {
         page: page.toString(),
         limit: "10",
-        isAdmin: "true",
       };
+      if (search) params.search = search;
 
       if (methodFilter && methodFilter !== "all") params.method = methodFilter;
       if (statusFilter && statusFilter !== "all") params.status = statusFilter;
 
-      const { data } = await API.get("/payments", { params });
+      const { data } = await API.get("/api/admin/payments", { params });
 
       setPayments(data.data || []);
       setTotalPages(data.pagination?.pages || 1);
@@ -92,7 +92,7 @@ export default function PaymentsClient() {
 
   useEffect(() => {
     fetchPayments();
-  }, [page, methodFilter, statusFilter]);
+  }, [page, methodFilter, statusFilter, search]);
 
   const getStatusColor = (status: string) => {
     switch (status) {

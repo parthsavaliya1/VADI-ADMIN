@@ -96,7 +96,7 @@ export default function AddProductClient() {
 
   const fetchCategories = async () => {
     try {
-      const { data } = await API.get("/categories", {
+      const { data } = await API.get("/api/admin/categories", {
         params: { isActive: "true" },
       });
       if (data.success) {
@@ -109,7 +109,7 @@ export default function AddProductClient() {
 
   const fetchSellers = async () => {
     try {
-      const { data } = await API.get("/sellers", {
+      const { data } = await API.get("/api/admin/sellers", {
         params: { isActive: "true", sortBy: "name", sortOrder: "asc" },
       });
       if (data.success) {
@@ -380,7 +380,7 @@ export default function AddProductClient() {
         })),
       };
 
-      const { data } = await API.post("/products", payload);
+      const { data } = await API.post("/api/admin/products", payload);
 
       if (data.success) {
         router.push("/admin/products");

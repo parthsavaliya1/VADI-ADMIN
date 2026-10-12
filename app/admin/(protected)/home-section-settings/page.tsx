@@ -28,7 +28,7 @@ export default function HomeSectionSettingsPage() {
   useEffect(() => {
     const load = async () => {
       try {
-        const { data } = await API.get("/home-section-settings");
+        const { data } = await API.get("/api/admin/home-section-settings");
         const s = data?.data;
         if (s) {
           setForm({
@@ -56,7 +56,7 @@ export default function HomeSectionSettingsPage() {
   const handleSave = async () => {
     try {
       setSaving(true);
-      const { data } = await API.put("/home-section-settings", form);
+      const { data } = await API.put("/api/admin/home-section-settings", form);
       if (!data?.success) throw new Error(data?.message || "Failed to save");
       alert("Home layout saved. The mobile app will reflect this after refresh.");
     } catch (e: unknown) {

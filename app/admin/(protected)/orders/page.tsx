@@ -48,12 +48,12 @@ export default function OrdersClient() {
   const fetchOrders = async () => {
     setLoading(true);
     try {
-      const { data } = await API.get("/orders", {
+      const { data } = await API.get("/api/admin/orders", {
         params: {
           page,
           limit: 10,
           status: statusFilter || undefined,
-          isAdmin: "true",
+          search: search || undefined,
         },
       });
       setOrders(data.data || []);
@@ -68,11 +68,11 @@ export default function OrdersClient() {
 
   useEffect(() => {
     fetchOrders();
-  }, [page, statusFilter]);
+  }, [page, statusFilter, search]);
 
   const updateStatus = async (id: string, status: string) => {
     try {
-      await API.put(`/orders/${id}/status`, { status });
+      await API.put(`/api/admin/orders/${id}/status`, { status });
       fetchOrders();
     } catch {
       alert("Failed to update status");
@@ -82,7 +82,7 @@ export default function OrdersClient() {
   const cancelOrder = async (id: string) => {
     if (!confirm("Are you sure you want to cancel this order?")) return;
     try {
-      await API.post(`/orders/${id}/cancel`);
+      await API.post(`/api/admin/orders/${id}/cancel`);
       fetchOrders();
     } catch {
       alert("Failed to cancel order");

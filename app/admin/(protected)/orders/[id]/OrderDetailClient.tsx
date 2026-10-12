@@ -34,6 +34,7 @@ type ShippingSnapshot = {
   pincode: string;
   landmark?: string;
   address?: string;
+  addressLine?: string;
 };
 
 type Order = {
@@ -111,7 +112,7 @@ export default function OrderDetailClient({ orderId }: { orderId: string }) {
   useEffect(() => {
     const fetchOrder = async () => {
       try {
-        const { data } = await API.get(`/orders/${orderId}`);
+        const { data } = await API.get(`/api/admin/orders/${orderId}`);
         if (data.success) {
           // API returns { success, data: { order: {...}, payment: {...} } }
           setOrder(data.data.order ?? data.data);
@@ -130,7 +131,7 @@ export default function OrderDetailClient({ orderId }: { orderId: string }) {
     if (!order || order.status === newStatus) return;
     setUpdating(true);
     try {
-      const { data } = await API.put(`/orders/${orderId}/status`, {
+      const { data } = await API.put(`/api/admin/orders/${orderId}/status`, {
         status: newStatus,
       });
       if (data.success) {
@@ -153,7 +154,7 @@ export default function OrderDetailClient({ orderId }: { orderId: string }) {
     setVerifyingHandover(true);
     try {
       const { data } = await API.post(
-        `/orders/${orderId}/verify-delivery-handover`,
+        `/api/admin/orders/${orderId}/verify-delivery-handover`,
         { code: handoverInput.trim() },
       );
       if (data.success && data.data) {
@@ -438,8 +439,8 @@ export default function OrderDetailClient({ orderId }: { orderId: string }) {
                 </h2>
                 <div className="space-y-1 text-sm">
                   <p className="font-medium">{addr.name}</p>
-                  {addr.address && (
-                    <p className="text-muted-foreground">{addr.address}</p>
+                  {(addr.addressLine || addr.address) && (
+                    <p className="text-muted-foreground">{addr.addressLine || addr.address}</p>
                   )}
                   {addr.landmark && (
                     <p className="text-muted-foreground">

@@ -3,8 +3,13 @@
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 
+const API_BASE =
+  process.env.NEXT_PUBLIC_API_URL || "https://vadi-backend.onrender.com";
+
 export default function LoginPage() {
+  const [mode, setMode] = useState<"admin" | "seller">("admin");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -12,6 +17,29 @@ export default function LoginPage() {
   const handleLogin = async () => {
     setLoading(true);
     setError("");
+
+    if (mode === "seller") {
+      const check = await fetch(`${API_BASE}/sellers/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone, password }),
+      });
+      const body = await check.json().catch(() => ({}));
+      if (!check.ok) {
+        setLoading(false);
+        setError(body.message || "Could not sign in");
+        return;
+      }
+      const res = await signIn("seller-credentials", {
+        phone,
+        password,
+        redirect: false,
+      });
+      setLoading(false);
+      if (res?.error) setError(body.message || "Could not sign in");
+      else window.location.href = "/admin/seller";
+      return;
+    }
 
     const res = await signIn("admin-credentials", {
       email,
@@ -33,10 +61,31 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         {/* Logo / Heading */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-semibold tracking-tight">Admin Panel</h1>
+          <h1 className="text-3xl font-semibold tracking-tight">
+            {mode === "seller" ? "Seller Panel" : "Admin Panel"}
+          </h1>
           <p className="text-sm text-muted-foreground mt-2">
-            Sign in to continue
+            {mode === "seller"
+              ? "Sign in only after an admin approves your shop"
+              : "Sign in to continue"}
           </p>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2 mb-4">
+          <button
+            type="button"
+            onClick={() => { setMode("admin"); setError(""); }}
+            className={`py-2 rounded-md text-sm font-medium border ${mode === "admin" ? "bg-primary text-primary-foreground" : "bg-card"}`}
+          >
+            Admin
+          </button>
+          <button
+            type="button"
+            onClick={() => { setMode("seller"); setError(""); }}
+            className={`py-2 rounded-md text-sm font-medium border ${mode === "seller" ? "bg-primary text-primary-foreground" : "bg-card"}`}
+          >
+            Seller
+          </button>
         </div>
 
         {/* Card */}
@@ -48,6 +97,7 @@ export default function LoginPage() {
           )}
 
           {/* Email */}
+          {mode === "admin" ? (
           <div className="mb-5">
             <label className="text-sm font-medium block mb-2">Email</label>
             <input
@@ -61,6 +111,21 @@ export default function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
+          ) : (
+          <div className="mb-5">
+            <label className="text-sm font-medium block mb-2">Phone</label>
+            <input
+              type="tel"
+              placeholder="10-digit mobile"
+              className="w-full px-4 py-2.5 rounded-md border border-input bg-background
+                         placeholder:text-muted-foreground
+                         focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary
+                         transition"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+            />
+          </div>
+          )}
 
           {/* Password */}
           <div className="mb-6">
