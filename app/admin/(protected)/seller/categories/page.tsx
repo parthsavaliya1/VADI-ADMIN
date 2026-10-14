@@ -50,7 +50,7 @@ export default function SellerCategoriesPage() {
           New categories stay hidden until an admin approves them. Approved categories can be used on your products.
         </p>
       </div>
-      <form onSubmit={onSubmit} className="space-y-3 rounded-xl border border-[#E5E7EB] bg-white p-4">
+      <form onSubmit={onSubmit} className="space-y-3 rounded-xl border border-border bg-card p-4">
         <input className="w-full px-4 py-2.5 rounded-lg border" placeholder="Category name" value={name} onChange={(e) => setName(e.target.value)} />
         <input
           type="file"
@@ -62,16 +62,16 @@ export default function SellerCategoriesPage() {
             if (url) setImage(url);
           }}
         />
-        <button disabled={saving} className="rounded-lg bg-[#B56A45] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#9A5436] disabled:opacity-60">
+        <button disabled={saving} className="rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white hover:bg-primary-dark disabled:opacity-60">
           {saving ? "Sending…" : "Send for approval"}
         </button>
       </form>
       <div className="space-y-2">
         {categories.map((item) => (
-          <div key={item._id} className="flex items-center justify-between gap-3 rounded-xl border border-[#E5E7EB] bg-white px-3 py-2 text-sm">
+          <div key={item._id} className="flex items-center justify-between gap-3 rounded-xl border border-border bg-card px-3 py-2 text-sm">
             <div className="flex min-w-0 items-center gap-3">
               {item.image ? (
-                <img src={item.image} alt="" className="h-9 w-9 rounded-md border border-[#E5E7EB] object-cover" />
+                <img src={item.image} alt="" className="h-9 w-9 rounded-md border border-border object-cover" />
               ) : null}
               <span className="truncate">{item.name}</span>
             </div>

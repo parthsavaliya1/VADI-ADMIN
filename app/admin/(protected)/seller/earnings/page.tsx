@@ -41,31 +41,31 @@ export default function SellerEarningsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold">Earnings</h1>
-        <p className="mt-1 max-w-2xl text-sm text-[#6B7280]">
+        <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
           Each paid order for your products is split here. You receive the product total minus the
           commission set by admin. Delivery charges are not part of your earnings.
         </p>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div className="rounded-xl border border-[#E5E7EB] bg-white p-5">
-          <p className="text-sm text-[#6B7280]">You receive</p>
+        <div className="rounded-xl border border-border bg-card p-5">
+          <p className="text-sm text-muted-foreground">You receive</p>
           <p className="mt-2 text-2xl font-semibold">{rupee(earnings)}</p>
         </div>
-        <div className="rounded-xl border border-[#E5E7EB] bg-white p-5">
-          <p className="text-sm text-[#6B7280]">Commission kept by platform</p>
+        <div className="rounded-xl border border-border bg-card p-5">
+          <p className="text-sm text-muted-foreground">Commission kept by platform</p>
           <p className="mt-2 text-2xl font-semibold">{rupee(commission)}</p>
         </div>
       </div>
 
       {loading ? (
-        <p className="text-sm text-[#6B7280]">Loading earnings…</p>
+        <p className="text-sm text-muted-foreground">Loading earnings…</p>
       ) : rows.length === 0 ? (
-        <p className="text-sm text-[#6B7280]">No paid orders yet. Earnings appear after the customer payment succeeds.</p>
+        <p className="text-sm text-muted-foreground">No paid orders yet. Earnings appear after the customer payment succeeds.</p>
       ) : (
-        <div className="overflow-hidden rounded-xl border border-[#E5E7EB] bg-white">
+        <div className="overflow-hidden rounded-xl border border-border bg-card">
           <table className="w-full text-sm">
-            <thead className="bg-[#F7F8FA] text-left text-[#6B7280]">
+            <thead className="bg-background text-left text-muted-foreground">
               <tr>
                 <th className="px-4 py-3 font-medium">Order</th>
                 <th className="px-4 py-3 font-medium">Product sales</th>
@@ -76,10 +76,10 @@ export default function SellerEarningsPage() {
             </thead>
             <tbody>
               {rows.map((row) => (
-                <tr key={row._id} className="border-t border-[#E5E7EB]">
+                <tr key={row._id} className="border-t border-border">
                   <td className="px-4 py-3">
                     <div className="font-medium">#{row.orderNumber || "Order"}</div>
-                    <div className="text-xs text-[#6B7280]">
+                    <div className="text-xs text-muted-foreground">
                       {new Date(row.paidAt || row.createdAt).toLocaleString("en-IN")}
                     </div>
                   </td>

@@ -155,7 +155,7 @@ export default function CommissionPage() {
   if (loading && !report) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-[#B56A45]" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -166,7 +166,7 @@ export default function CommissionPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Payment rules</h1>
-        <p className="mt-1 max-w-3xl text-sm text-[#6B7280]">
+        <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
           These rules apply to new orders. A paid order keeps the commission, delivery fee, and
           driver amount from the moment it was placed, so later changes do not rewrite old orders.
           Seller commission is taken from the product total. The delivery fee is charged to the
@@ -174,10 +174,10 @@ export default function CommissionPage() {
         </p>
       </div>
 
-      <div className="max-w-3xl space-y-5 rounded-xl border border-[#E5E7EB] bg-white p-5">
+      <div className="max-w-3xl space-y-5 rounded-xl border border-border bg-card p-5">
         <div>
           <Label htmlFor="default-commission">Seller commission (%)</Label>
-          <p className="mt-1 text-xs text-[#6B7280]">
+          <p className="mt-1 text-xs text-muted-foreground">
             Default for every seller who does not have their own rate. 10 means the seller keeps 90% of the product price.
           </p>
           <Input
@@ -195,7 +195,7 @@ export default function CommissionPage() {
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <Label htmlFor="delivery-fee">Customer delivery fee (₹)</Label>
-            <p className="mt-1 text-xs text-[#6B7280]">Charged on checkout unless the order is free.</p>
+            <p className="mt-1 text-xs text-muted-foreground">Charged on checkout unless the order is free.</p>
             <Input
               id="delivery-fee"
               className="mt-3"
@@ -208,7 +208,7 @@ export default function CommissionPage() {
           </div>
           <div>
             <Label htmlFor="free-above">Free delivery above (₹)</Label>
-            <p className="mt-1 text-xs text-[#6B7280]">Use 0 if delivery is never free.</p>
+            <p className="mt-1 text-xs text-muted-foreground">Use 0 if delivery is never free.</p>
             <Input
               id="free-above"
               className="mt-3"
@@ -224,12 +224,12 @@ export default function CommissionPage() {
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <Label htmlFor="driver-mode">Driver fee</Label>
-            <p className="mt-1 text-xs text-[#6B7280]">
+            <p className="mt-1 text-xs text-muted-foreground">
               A flat amount is still paid when the customer gets free delivery.
             </p>
             <select
               id="driver-mode"
-              className="mt-3 h-10 w-full rounded-md border border-[#E5E7EB] bg-white px-3 text-sm"
+              className="mt-3 h-10 w-full rounded-md border border-border bg-card px-3 text-sm"
               value={driverFeeMode}
               onChange={(e) =>
                 setDriverFeeMode(e.target.value as "flat" | "percent_of_delivery" | "percent_of_order")
@@ -244,7 +244,7 @@ export default function CommissionPage() {
             <Label htmlFor="driver-value">
               {driverFeeMode === "flat" ? "Driver amount (₹)" : "Driver percent (%)"}
             </Label>
-            <p className="mt-1 text-xs text-[#6B7280]">Saved on each new order as the driver payout.</p>
+            <p className="mt-1 text-xs text-muted-foreground">Saved on each new order as the driver payout.</p>
             <Input
               id="driver-value"
               className="mt-3"
@@ -272,14 +272,14 @@ export default function CommissionPage() {
           { label: "Delivery fees", value: rupee(totals?.deliveryFee || 0) },
           { label: "Driver payouts", value: rupee(totals?.driverPayout || 0) },
         ].map((card) => (
-          <div key={card.label} className="rounded-xl border border-[#E5E7EB] bg-white p-5">
-            <p className="text-[13px] font-medium text-[#6B7280]">{card.label}</p>
-            <p className="mt-3 text-2xl font-semibold text-[#1F2937]">{card.value}</p>
+          <div key={card.label} className="rounded-xl border border-border bg-card p-5">
+            <p className="text-[13px] font-medium text-muted-foreground">{card.label}</p>
+            <p className="mt-3 text-2xl font-semibold text-foreground">{card.value}</p>
           </div>
         ))}
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-[#E5E7EB] bg-white">
+      <div className="overflow-hidden rounded-xl border border-border bg-card">
         <Table>
           <TableHeader>
             <TableRow>
@@ -295,7 +295,7 @@ export default function CommissionPage() {
           <TableBody>
             {(report?.sellers || []).length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="py-8 text-center text-[#6B7280]">
+                <TableCell colSpan={7} className="py-8 text-center text-muted-foreground">
                   No sellers yet.
                 </TableCell>
               </TableRow>
@@ -304,7 +304,7 @@ export default function CommissionPage() {
                 <TableRow key={seller._id}>
                   <TableCell>
                     <div className="font-medium">{seller.name}</div>
-                    <div className="text-xs text-[#6B7280]">{seller.phone || seller.status}</div>
+                    <div className="text-xs text-muted-foreground">{seller.phone || seller.status}</div>
                   </TableCell>
                   <TableCell>
                     <Input
@@ -319,7 +319,7 @@ export default function CommissionPage() {
                         setOverrides((prev) => ({ ...prev, [seller._id]: e.target.value }))
                       }
                     />
-                    <p className="mt-1 text-[11px] text-[#6B7280]">
+                    <p className="mt-1 text-[11px] text-muted-foreground">
                       Using {seller.effectivePercent}%
                     </p>
                   </TableCell>

@@ -105,11 +105,11 @@ export default function PaymentsClient() {
       case "initiated":
         return "bg-sky-50 text-sky-700";
       case "cancelled":
-        return "bg-[#F3F4F6] text-[#6B7280]";
+        return "bg-secondary text-muted-foreground";
       case "refunded":
         return "bg-violet-50 text-violet-700";
       default:
-        return "bg-[#F3F4F6] text-[#6B7280]";
+        return "bg-secondary text-muted-foreground";
     }
   };
 

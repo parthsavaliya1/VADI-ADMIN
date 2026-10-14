@@ -49,21 +49,21 @@ export default function Header({ setOpen }: HeaderProps) {
   const roleLabel = session?.user?.role === "seller" ? "Seller" : "Admin";
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center justify-between gap-3 border-b border-[#E5E7EB] bg-white px-4 sm:px-6">
+    <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center justify-between gap-3 border-b border-border bg-card px-4 sm:px-6">
       <div className="flex min-w-0 items-center gap-3">
         <button
           onClick={() => setOpen(true)}
-          className="rounded-lg p-2 text-[#1F2937] transition hover:bg-[#F7F8FA] md:hidden"
+          className="rounded-lg p-2 text-foreground transition hover:bg-background md:hidden"
           aria-label="Open menu"
         >
           <Menu size={18} />
         </button>
 
         <div className="min-w-0">
-          <h1 className="truncate text-[15px] font-semibold capitalize text-[#1F2937]">
+          <h1 className="truncate text-[15px] font-semibold capitalize text-foreground">
             {pageTitle}
           </h1>
-          <p className="hidden text-xs text-[#6B7280] sm:block">{roleLabel} workspace</p>
+          <p className="hidden text-xs text-muted-foreground sm:block">{roleLabel} workspace</p>
         </div>
       </div>
 
@@ -73,41 +73,41 @@ export default function Header({ setOpen }: HeaderProps) {
           className={`flex items-center gap-2.5 rounded-lg border px-2 py-1.5 transition
           ${
             openDropdown
-              ? "border-[#B56A45]/30 bg-[#F8EDE6]"
-              : "border-transparent hover:border-[#E5E7EB] hover:bg-[#F7F8FA]"
+              ? "border-primary/30 bg-secondary"
+              : "border-transparent hover:border-border hover:bg-background"
           }`}
         >
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#B56A45] text-sm font-semibold text-white">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white">
             {firstLetter}
           </div>
 
-          <span className="hidden max-w-[10rem] truncate text-sm font-medium text-[#1F2937] sm:block">
+          <span className="hidden max-w-[10rem] truncate text-sm font-medium text-foreground sm:block">
             {session?.user?.name}
           </span>
 
           <ChevronDown
             size={16}
-            className={`text-[#6B7280] transition-transform ${
+            className={`text-muted-foreground transition-transform ${
               openDropdown ? "rotate-180" : ""
             }`}
           />
         </button>
 
         {openDropdown && (
-          <div className="absolute right-0 z-50 mt-2 w-56 overflow-hidden rounded-xl border border-[#E5E7EB] bg-white py-1 shadow-[0_8px_24px_rgba(15,23,42,0.08)]">
-            <div className="border-b border-[#E5E7EB] px-3 py-2.5">
-              <p className="truncate text-sm font-medium text-[#1F2937]">
+          <div className="absolute right-0 z-50 mt-2 w-56 overflow-hidden rounded-xl border border-border bg-card py-1 shadow-[0_8px_24px_rgba(15,23,42,0.08)]">
+            <div className="border-b border-border px-3 py-2.5">
+              <p className="truncate text-sm font-medium text-foreground">
                 {session?.user?.name}
               </p>
-              <p className="truncate text-xs text-[#6B7280]">
+              <p className="truncate text-xs text-muted-foreground">
                 {session?.user?.email || roleLabel}
               </p>
             </div>
             <button
               onClick={handleProfileClick}
-              className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-[#1F2937] transition hover:bg-[#F7F8FA]"
+              className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-foreground transition hover:bg-background"
             >
-              <User size={15} className="text-[#6B7280]" />
+              <User size={15} className="text-muted-foreground" />
               Profile
             </button>
             <button

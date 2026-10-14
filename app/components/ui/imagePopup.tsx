@@ -46,7 +46,7 @@ export default function ImagePopup({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-90 px-2 sm:px-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-card bg-opacity-90 px-2 sm:px-6">
       <button
         onClick={onClose}
         className="absolute top-4 right-4 text-black hover:text-gray-700"
@@ -54,9 +54,9 @@ export default function ImagePopup({
         <X size={30} />
       </button>
 
-      <div className="flex flex-col sm:flex-row w-full max-w-5xl h-[90vh] sm:h-[85vh] overflow-hidden rounded-lg bg-white shadow-xl border border-zinc-200">
+      <div className="flex flex-col sm:flex-row w-full max-w-5xl h-[90vh] sm:h-[85vh] overflow-hidden rounded-lg bg-card shadow-xl border border-zinc-200">
         {/* Image Section */}
-        <div className="flex-1 flex flex-col justify-between border-b sm:border-b-0 sm:border-r border-zinc-200 p-4 bg-white">
+        <div className="flex-1 flex flex-col justify-between border-b sm:border-b-0 sm:border-r border-zinc-200 p-4 bg-card">
           <div className="flex-1 flex flex-col justify-center items-center overflow-auto">
             <div className="flex-1 overflow-auto flex items-center justify-center">
               <img
@@ -82,7 +82,7 @@ export default function ImagePopup({
         </div>
 
         {/* Info Panel */}
-        <div className="sm:w-[350px] w-full text-black p-6 flex flex-col justify-between overflow-y-auto bg-white">
+        <div className="sm:w-[350px] w-full text-black p-6 flex flex-col justify-between overflow-y-auto bg-card">
           <div className="flex flex-col gap-5">
             <div className="flex items-center gap-3">
               <img

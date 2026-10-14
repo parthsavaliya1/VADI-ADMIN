@@ -16,6 +16,7 @@ import {
   Image as ImageIcon,
   Timer,
   LayoutGrid,
+  Palette,
   Store,
   Truck,
   X,
@@ -107,6 +108,11 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
       href: "/admin/home-section-settings",
       icon: LayoutGrid,
     },
+    {
+      name: "Theme",
+      href: "/admin/theme-settings",
+      icon: Palette,
+    },
   ];
 
   return (
@@ -119,19 +125,19 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
       )}
 
       <aside
-        className={`fixed top-0 left-0 z-50 flex h-full w-[min(17.5rem,88vw)] flex-col border-r border-[#E5E7EB] bg-white transition-transform duration-300 md:static md:w-64 md:translate-x-0
+        className={`fixed top-0 left-0 z-50 flex h-full w-[min(17.5rem,88vw)] flex-col border-r border-border bg-card transition-transform duration-300 md:static md:w-64 md:translate-x-0
         ${open ? "translate-x-0" : "-translate-x-full"}`}
       >
-        <div className="flex h-16 shrink-0 items-center justify-between gap-3 border-b border-[#E5E7EB] px-4">
+        <div className="flex h-16 shrink-0 items-center justify-between gap-3 border-b border-border px-4">
           <div className="flex min-w-0 items-center gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#F8EDE6] text-[#B56A45]">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-secondary text-primary">
               {isSeller ? <Store size={18} /> : <Shield size={18} />}
             </div>
             <div className="min-w-0">
-              <p className="truncate text-sm font-semibold tracking-tight text-[#1F2937]">
+              <p className="truncate text-sm font-semibold tracking-tight text-foreground">
                 VADI
               </p>
-              <p className="truncate text-xs text-[#6B7280]">
+              <p className="truncate text-xs text-muted-foreground">
                 {isSeller ? "Seller" : "Admin"}
               </p>
             </div>
@@ -139,7 +145,7 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
           <button
             type="button"
             onClick={() => setOpen(false)}
-            className="rounded-md p-1.5 text-[#6B7280] hover:bg-[#F7F8FA] md:hidden"
+            className="rounded-md p-1.5 text-muted-foreground hover:bg-background md:hidden"
             aria-label="Close menu"
           >
             <X size={18} />
@@ -162,8 +168,8 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
                 className={`flex items-center gap-3 rounded-lg px-3 py-2 text-[13.5px] transition-colors
                 ${
                   isActive
-                    ? "bg-[#F8EDE6] font-medium text-[#B56A45]"
-                    : "text-[#6B7280] hover:bg-[#F7F8FA] hover:text-[#1F2937]"
+                    ? "bg-primary font-medium text-primary-foreground"
+                    : "text-muted-foreground hover:bg-secondary hover:text-foreground"
                 }`}
               >
                 <Icon size={17} strokeWidth={isActive ? 2.25 : 1.75} />
@@ -173,16 +179,16 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
           })}
         </nav>
 
-        <div className="shrink-0 border-t border-[#E5E7EB] p-3">
+        <div className="shrink-0 border-t border-border p-3">
           <div className="flex items-center gap-3 rounded-lg px-2 py-2">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#F8EDE6] text-sm font-semibold text-[#B56A45]">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-secondary text-sm font-semibold text-primary">
               {firstLetter}
             </div>
             <div className="min-w-0">
-              <p className="truncate text-sm font-medium text-[#1F2937]">
+              <p className="truncate text-sm font-medium text-foreground">
                 {session?.user?.name}
               </p>
-              <p className="truncate text-xs text-[#6B7280]">
+              <p className="truncate text-xs text-muted-foreground">
                 {session?.user?.email}
               </p>
             </div>

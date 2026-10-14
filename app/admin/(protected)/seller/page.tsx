@@ -80,22 +80,22 @@ export default function SellerDashboardPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
-        <p className="mt-1 text-sm text-[#6B7280]">Welcome to your seller panel</p>
+        <p className="mt-1 text-sm text-muted-foreground">Welcome to your seller panel</p>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {statCards.map((card) => {
           const Icon = card.icon;
           return (
-            <div key={card.title} className="rounded-xl border border-[#E5E7EB] bg-white p-5">
+            <div key={card.title} className="rounded-xl border border-border bg-card p-5">
               <div className="flex items-center justify-between gap-3">
-                <p className="text-[13px] font-medium text-[#6B7280]">{card.title}</p>
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#F8EDE6] text-[#B56A45]">
+                <p className="text-[13px] font-medium text-muted-foreground">{card.title}</p>
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-secondary text-primary">
                   <Icon className="h-4 w-4" />
                 </div>
               </div>
-              <p className="mt-3 text-[1.75rem] font-semibold leading-none tracking-tight text-[#1F2937]">{card.value}</p>
-              <p className="mt-2 text-xs text-[#6B7280]">{card.change}</p>
+              <p className="mt-3 text-[1.75rem] font-semibold leading-none tracking-tight text-foreground">{card.value}</p>
+              <p className="mt-2 text-xs text-muted-foreground">{card.change}</p>
             </div>
           );
         })}
@@ -118,19 +118,19 @@ export default function SellerDashboardPage() {
         </div>
       ) : null}
 
-      <div className="rounded-xl border border-[#E5E7EB] bg-white p-5">
+      <div className="rounded-xl border border-border bg-card p-5">
         <h2 className="mb-4 text-sm font-semibold">Quick Links</h2>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-          <a href="/admin/seller/orders" className="rounded-lg border border-[#E5E7EB] p-4 text-center transition hover:border-[#B56A45]/30 hover:bg-[#F8EDE6]">
-            <ShoppingCart className="mx-auto mb-2 h-5 w-5 text-[#B56A45]" />
+          <a href="/admin/seller/orders" className="rounded-lg border border-border p-4 text-center transition hover:border-primary/30 hover:bg-background">
+            <ShoppingCart className="mx-auto mb-2 h-5 w-5 text-primary" />
             <p className="text-sm font-medium">Manage Orders</p>
           </a>
-          <a href="/admin/seller/products" className="rounded-lg border border-[#E5E7EB] p-4 text-center transition hover:border-[#B56A45]/30 hover:bg-[#F8EDE6]">
-            <Package className="mx-auto mb-2 h-5 w-5 text-[#B56A45]" />
+          <a href="/admin/seller/products" className="rounded-lg border border-border p-4 text-center transition hover:border-primary/30 hover:bg-background">
+            <Package className="mx-auto mb-2 h-5 w-5 text-primary" />
             <p className="text-sm font-medium">Manage Products</p>
           </a>
-          <a href="/admin/seller/categories" className="rounded-lg border border-[#E5E7EB] p-4 text-center transition hover:border-[#B56A45]/30 hover:bg-[#F8EDE6]">
-            <FolderTree className="mx-auto mb-2 h-5 w-5 text-[#B56A45]" />
+          <a href="/admin/seller/categories" className="rounded-lg border border-border p-4 text-center transition hover:border-primary/30 hover:bg-background">
+            <FolderTree className="mx-auto mb-2 h-5 w-5 text-primary" />
             <p className="text-sm font-medium">Categories</p>
           </a>
         </div>

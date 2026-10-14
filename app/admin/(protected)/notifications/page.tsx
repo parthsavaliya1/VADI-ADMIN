@@ -101,8 +101,9 @@ export default function NotificationsPage() {
         <div>
           <h1 className="text-2xl md:text-3xl font-bold">Notifications</h1>
           <p className="text-sm text-muted-foreground mt-1 max-w-2xl">
-            Send push notifications to users with Firebase tokens, and save each
-            message to the in-app notification list (bell icon) for logged-in users.
+            Send a push to every registered phone. It is delivered by the
+            system even when the app is closed and the screen is off, and it
+            is also saved in the in-app notification list.
           </p>
         </div>
       </div>

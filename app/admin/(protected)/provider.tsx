@@ -16,7 +16,7 @@ export default function AdminShell({
 
   return (
     <SessionProvider session={session}>
-      <div className="vadi-console flex h-screen overflow-hidden bg-[#F7F8FA] text-[#1F2937]">
+      <div className="vadi-console flex h-screen overflow-hidden bg-background text-foreground">
         <Sidebar open={open} setOpen={setOpen} />
         <div className="flex min-w-0 flex-1 flex-col">
           <Header setOpen={setOpen} />

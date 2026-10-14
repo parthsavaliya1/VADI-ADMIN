@@ -81,7 +81,7 @@ export default function SellerOrdersPage() {
         orders.map((order) => {
           const closed = ["delivered", "cancelled", "returned"].includes(order.status);
           return (
-            <div key={order._id} className="space-y-3 rounded-xl border border-[#E5E7EB] bg-white p-4">
+            <div key={order._id} className="space-y-3 rounded-xl border border-border bg-card p-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
                   <p className="font-medium">#{order.orderNumber}</p>

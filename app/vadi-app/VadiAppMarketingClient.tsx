@@ -153,13 +153,13 @@ export function VadiAppMarketingClient() {
             <Button
               asChild
               variant="ghost"
-              className="hidden text-zinc-300 hover:bg-white/10 hover:text-white sm:inline-flex"
+              className="hidden text-zinc-300 hover:bg-card/10 hover:text-white sm:inline-flex"
             >
               <Link href="/">Admin home</Link>
             </Button>
             <Button
               asChild
-              className="rounded-full bg-white px-5 text-[#050806] hover:bg-zinc-200"
+              className="rounded-full bg-card px-5 text-[#050806] hover:bg-zinc-200"
             >
               <a href="#download">Get the app</a>
             </Button>
@@ -176,7 +176,7 @@ export function VadiAppMarketingClient() {
         <section className="section-container section-padding pb-16 pt-10 md:pt-16">
           <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
             <div>
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-zinc-300">
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-card/5 px-3 py-1 text-xs text-zinc-300">
                 <Sparkles className="h-3.5 w-3.5 text-amber-400" aria-hidden />
                 Crafted for storytelling &amp; stakeholder demos
               </div>
@@ -206,7 +206,7 @@ export function VadiAppMarketingClient() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="h-12 rounded-full border-white/15 bg-white/5 text-white hover:bg-white/10"
+                  className="h-12 rounded-full border-white/15 bg-card/5 text-white hover:bg-card/10"
                   asChild
                 >
                   <a href="#" aria-label="Google Play (placeholder)">
@@ -231,7 +231,7 @@ export function VadiAppMarketingClient() {
                       <MapPin className="h-3.5 w-3.5 text-emerald-400" />
                       Rajkot · demo
                     </span>
-                    <span className="rounded-full bg-white/5 px-2 py-0.5 text-[10px] uppercase tracking-wider text-zinc-400">
+                    <span className="rounded-full bg-card/5 px-2 py-0.5 text-[10px] uppercase tracking-wider text-zinc-400">
                       Live preview
                     </span>
                   </div>
@@ -257,7 +257,7 @@ export function VadiAppMarketingClient() {
                             "h-1.5 flex-1 rounded-full transition-all",
                             slide === i
                               ? "bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.5)]"
-                              : "bg-white/15 hover:bg-white/25",
+                              : "bg-card/15 hover:bg-card/25",
                           )}
                           aria-label={`Show slide ${i + 1}`}
                         />
@@ -287,7 +287,7 @@ export function VadiAppMarketingClient() {
           </div>
         </section>
 
-        <section id="experience" className="border-y border-white/5 bg-white/[0.02]">
+        <section id="experience" className="border-y border-white/5 bg-card/[0.02]">
           <div className="section-container section-padding">
             <div className="mx-auto max-w-2xl text-center">
               <h2 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl">
@@ -302,19 +302,19 @@ export function VadiAppMarketingClient() {
               <TabsList className="mx-auto grid w-full max-w-md grid-cols-3 rounded-full border border-white/10 bg-zinc-900/80 p-1">
                 <TabsTrigger
                   value="flow"
-                  className="rounded-full data-[state=active]:bg-white data-[state=active]:text-[#050806]"
+                  className="rounded-full data-[state=active]:bg-card data-[state=active]:text-[#050806]"
                 >
                   Flow
                 </TabsTrigger>
                 <TabsTrigger
                   value="trust"
-                  className="rounded-full data-[state=active]:bg-white data-[state=active]:text-[#050806]"
+                  className="rounded-full data-[state=active]:bg-card data-[state=active]:text-[#050806]"
                 >
                   Trust
                 </TabsTrigger>
                 <TabsTrigger
                   value="delight"
-                  className="rounded-full data-[state=active]:bg-white data-[state=active]:text-[#050806]"
+                  className="rounded-full data-[state=active]:bg-card data-[state=active]:text-[#050806]"
                 >
                   Delight
                 </TabsTrigger>
@@ -403,7 +403,7 @@ export function VadiAppMarketingClient() {
               />
               <Button
                 type="submit"
-                className="h-12 shrink-0 rounded-full bg-white px-6 text-[#050806] hover:bg-zinc-200"
+                className="h-12 shrink-0 rounded-full bg-card px-6 text-[#050806] hover:bg-zinc-200"
               >
                 {waitlistSent ? "Noted!" : "Notify me"}
               </Button>

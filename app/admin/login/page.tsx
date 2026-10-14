@@ -57,7 +57,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="vadi-console flex min-h-screen items-center justify-center bg-[#F7F8FA] px-4">
+    <div className="vadi-console flex min-h-screen items-center justify-center bg-background px-4">
       <div className="w-full max-w-md">
         {/* Logo / Heading */}
         <div className="text-center mb-8">
@@ -75,21 +75,21 @@ export default function LoginPage() {
           <button
             type="button"
             onClick={() => { setMode("admin"); setError(""); }}
-            className={`rounded-lg border py-2 text-sm font-medium ${mode === "admin" ? "border-[#B56A45] bg-[#B56A45] text-white" : "border-[#E5E7EB] bg-white text-[#1F2937]"}`}
+            className={`rounded-lg border py-2 text-sm font-medium ${mode === "admin" ? "border-primary bg-primary text-white" : "border-border bg-card text-foreground"}`}
           >
             Admin
           </button>
           <button
             type="button"
             onClick={() => { setMode("seller"); setError(""); }}
-            className={`rounded-lg border py-2 text-sm font-medium ${mode === "seller" ? "border-[#B56A45] bg-[#B56A45] text-white" : "border-[#E5E7EB] bg-white text-[#1F2937]"}`}
+            className={`rounded-lg border py-2 text-sm font-medium ${mode === "seller" ? "border-primary bg-primary text-white" : "border-border bg-card text-foreground"}`}
           >
             Seller
           </button>
         </div>
 
         {/* Card */}
-        <div className="rounded-xl border border-[#E5E7EB] bg-white p-6 sm:p-8">
+        <div className="rounded-xl border border-border bg-card p-6 sm:p-8">
           {error && (
             <div className="mb-5 bg-destructive/10 text-destructive text-sm px-4 py-2 rounded-md">
               {error}
@@ -146,8 +146,8 @@ export default function LoginPage() {
           <button
             onClick={handleLogin}
             disabled={loading}
-            className="w-full rounded-lg bg-[#B56A45] py-2.5 font-medium text-white
-                       transition hover:bg-[#9A5436] active:scale-[0.98]
+            className="w-full rounded-lg bg-primary py-2.5 font-medium text-white
+                       transition hover:bg-primary-dark active:scale-[0.98]
                        disabled:opacity-60"
           >
             {loading ? "Signing in..." : "Sign In"}

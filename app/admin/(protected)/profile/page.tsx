@@ -48,26 +48,26 @@ export default function ProfilePage() {
 
   if (!isSeller) {
     return (
-      <div className="max-w-xl space-y-2 rounded-xl border border-[#E5E7EB] bg-white p-6">
+      <div className="max-w-xl space-y-2 rounded-xl border border-border bg-card p-6">
         <h1 className="text-2xl font-semibold">Profile</h1>
-        <p className="text-sm text-[#6B7280]">{session?.user?.name}</p>
-        <p className="text-sm text-[#6B7280]">{session?.user?.email}</p>
+        <p className="text-sm text-muted-foreground">{session?.user?.name}</p>
+        <p className="text-sm text-muted-foreground">{session?.user?.email}</p>
       </div>
     );
   }
 
   return (
-    <form onSubmit={onSubmit} className="max-w-xl space-y-3 rounded-xl border border-[#E5E7EB] bg-white p-5 sm:p-6">
+    <form onSubmit={onSubmit} className="max-w-xl space-y-3 rounded-xl border border-border bg-card p-5 sm:p-6">
       <div>
         <h1 className="text-2xl font-semibold">Profile</h1>
-        <p className="mt-1 text-sm text-[#6B7280]">Shop details for your seller account.</p>
+        <p className="mt-1 text-sm text-muted-foreground">Shop details for your seller account.</p>
       </div>
       <input className="w-full px-4 py-2.5 rounded-lg border" value={name} onChange={(e) => setName(e.target.value)} placeholder="Shop name" />
       <input className="w-full px-4 py-2.5 rounded-lg border" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone" />
       <input className="w-full px-4 py-2.5 rounded-lg border" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" />
       <input className="w-full px-4 py-2.5 rounded-lg border" value={city} onChange={(e) => setCity(e.target.value)} placeholder="City" />
       <input className="w-full px-4 py-2.5 rounded-lg border" value={area} onChange={(e) => setArea(e.target.value)} placeholder="Area" />
-      <button disabled={saving} className="rounded-lg bg-[#B56A45] px-5 py-2.5 text-sm font-medium text-white disabled:opacity-60">
+      <button disabled={saving} className="rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-white disabled:opacity-60">
         {saving ? "Saving…" : "Save details"}
       </button>
       {message ? <p className="text-sm">{message}</p> : null}

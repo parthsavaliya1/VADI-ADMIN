@@ -335,7 +335,7 @@ export default function ProductsClient() {
                     >
                       <TableCell className="min-w-[250px]">
                         <div className="flex items-center gap-3">
-                          <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg border border-[#E5E7EB] bg-[#F7F8FA]">
+                          <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg border border-border bg-secondary">
                             {product.image ? (
                               <img
                                 src={product.image}
@@ -371,7 +371,7 @@ export default function ProductsClient() {
                         )}
                       </TableCell>
                       <TableCell className="whitespace-nowrap">
-                        <div className="font-semibold text-[#1F2937]">
+                        <div className="font-semibold text-foreground">
                           ₹{defaultVariant?.price?.toLocaleString?.() || 0}
                         </div>
                         {defaultVariant &&
@@ -407,7 +407,7 @@ export default function ProductsClient() {
                               Active
                             </span>
                           ) : (
-                            <span className="inline-flex w-fit rounded-full bg-[#F3F4F6] px-2 py-0.5 text-xs font-medium text-[#6B7280]">
+                            <span className="inline-flex w-fit rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-muted-foreground">
                               Inactive
                             </span>
                           )}
@@ -458,7 +458,7 @@ export default function ProductsClient() {
                           )}
                           <Link
                             href={`/admin/products/edit/${product._id}`}
-                            className="rounded-lg border border-[#E5E7EB] p-2 text-[#1F2937] transition hover:bg-[#F7F8FA]"
+                            className="rounded-lg border border-border p-2 text-foreground transition hover:bg-background"
                             title="Edit Product"
                           >
                             <Edit2 className="h-4 w-4" />

@@ -53,7 +53,7 @@ const STATUS_STYLES: Record<string, string> = {
   pending: "bg-amber-50 text-amber-700",
   failed: "bg-red-50 text-red-700",
   initiated: "bg-sky-50 text-sky-700",
-  cancelled: "bg-[#F3F4F6] text-[#6B7280]",
+  cancelled: "bg-secondary text-muted-foreground",
   refunded: "bg-violet-50 text-violet-700",
   partial_refund: "bg-orange-50 text-orange-700",
 };

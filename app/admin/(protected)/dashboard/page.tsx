@@ -40,9 +40,9 @@ type Stats = {
 };
 
 const SERIES = [
-  { key: "users" as const, label: "Users", color: "#B56A45" },
-  { key: "orders" as const, label: "Orders", color: "#1F2937" },
-  { key: "products" as const, label: "Products", color: "#9CA3AF" },
+  { key: "users" as const, label: "Users", color: "hsl(var(--primary))" },
+  { key: "orders" as const, label: "Orders", color: "hsl(var(--foreground))" },
+  { key: "products" as const, label: "Products", color: "hsl(var(--muted-foreground))" },
   { key: "payments" as const, label: "Payments", color: "#D7B59A" },
 ];
 
@@ -56,7 +56,7 @@ function ActivityChart({ points }: { points: MonthPoint[] }) {
     <div>
       <div className="mb-4 flex flex-wrap gap-x-4 gap-y-2">
         {SERIES.map((series) => (
-          <span key={series.key} className="inline-flex items-center gap-2 text-xs text-[#6B7280]">
+          <span key={series.key} className="inline-flex items-center gap-2 text-xs text-muted-foreground">
             <span className="h-2 w-2 rounded-full" style={{ backgroundColor: series.color }} />
             {series.label}
           </span>
@@ -78,7 +78,7 @@ function ActivityChart({ points }: { points: MonthPoint[] }) {
                 />
               ))}
             </div>
-            <span className="mt-2 text-center text-[11px] text-[#6B7280]">{point.label}</span>
+            <span className="mt-2 text-center text-[11px] text-muted-foreground">{point.label}</span>
           </div>
         ))}
       </div>
@@ -91,24 +91,24 @@ function BreakdownChart({ title, items }: { title: string; items: Slice[] }) {
   const total = items.reduce((sum, item) => sum + item.count, 0);
 
   return (
-    <div className="rounded-xl border border-[#E5E7EB] bg-white p-5">
+    <div className="rounded-xl border border-border bg-card p-5">
       <div className="mb-4 flex items-center justify-between gap-3">
-        <h2 className="text-sm font-semibold text-[#1F2937]">{title}</h2>
-        <span className="text-xs text-[#6B7280]">{total.toLocaleString()} total</span>
+        <h2 className="text-sm font-semibold text-foreground">{title}</h2>
+        <span className="text-xs text-muted-foreground">{total.toLocaleString()} total</span>
       </div>
       {items.length === 0 ? (
-        <p className="text-sm text-[#6B7280]">No records yet</p>
+        <p className="text-sm text-muted-foreground">No records yet</p>
       ) : (
         <div className="space-y-3">
           {items.map((item) => (
             <div key={item.label}>
               <div className="mb-1 flex items-center justify-between gap-3 text-xs">
-                <span className="capitalize text-[#1F2937]">{item.label}</span>
-                <span className="font-medium text-[#6B7280]">{item.count.toLocaleString()}</span>
+                <span className="capitalize text-foreground">{item.label}</span>
+                <span className="font-medium text-muted-foreground">{item.count.toLocaleString()}</span>
               </div>
-              <div className="h-1.5 overflow-hidden rounded-full bg-[#F3F4F6]">
+              <div className="h-1.5 overflow-hidden rounded-full bg-secondary">
                 <div
-                  className="h-full rounded-full bg-[#B56A45]"
+                  className="h-full rounded-full bg-primary"
                   style={{ width: `${(item.count / max) * 100}%` }}
                 />
               </div>
@@ -197,7 +197,7 @@ export default function DashboardPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
-        <p className="mt-1 text-sm text-[#6B7280]">
+        <p className="mt-1 text-sm text-muted-foreground">
           Welcome to your admin panel
         </p>
       </div>
@@ -208,36 +208,36 @@ export default function DashboardPage() {
           return (
             <div
               key={index}
-              className="rounded-xl border border-[#E5E7EB] bg-white p-5"
+              className="rounded-xl border border-border bg-card p-5"
             >
               <div className="flex items-center justify-between gap-3">
-                <p className="text-[13px] font-medium text-[#6B7280]">
+                <p className="text-[13px] font-medium text-muted-foreground">
                   {card.title}
                 </p>
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#F8EDE6] text-[#B56A45]">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-secondary text-primary">
                   <Icon className="h-4 w-4" />
                 </div>
               </div>
-              <p className="mt-3 text-[1.75rem] font-semibold leading-none tracking-tight text-[#1F2937]">
+              <p className="mt-3 text-[1.75rem] font-semibold leading-none tracking-tight text-foreground">
                 {card.value}
               </p>
-              <p className="mt-2 text-xs text-[#6B7280]">{card.change}</p>
+              <p className="mt-2 text-xs text-muted-foreground">{card.change}</p>
             </div>
           );
         })}
       </div>
 
-      <div className="rounded-xl border border-[#E5E7EB] bg-white p-5">
+      <div className="rounded-xl border border-border bg-card p-5">
         <div className="mb-4">
-          <h2 className="text-sm font-semibold text-[#1F2937]">New records</h2>
-          <p className="mt-1 text-xs text-[#6B7280]">
+          <h2 className="text-sm font-semibold text-foreground">New records</h2>
+          <p className="mt-1 text-xs text-muted-foreground">
             Users, orders, products, and payments created in the last 6 months
           </p>
         </div>
         {stats?.charts?.monthly?.length ? (
           <ActivityChart points={stats.charts.monthly} />
         ) : (
-          <p className="text-sm text-[#6B7280]">Chart data is not available yet.</p>
+          <p className="text-sm text-muted-foreground">Chart data is not available yet.</p>
         )}
       </div>
 
@@ -250,7 +250,7 @@ export default function DashboardPage() {
 
       {(stats?.pendingOrders || 0) > 0 || (stats?.pendingPayments || 0) > 0 ? (
         <div>
-          <h2 className="mb-3 text-sm font-semibold text-[#1F2937]">Needs attention</h2>
+          <h2 className="mb-3 text-sm font-semibold text-foreground">Needs attention</h2>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {alertCards.map((card, index) => {
               const Icon = card.icon;
@@ -275,28 +275,28 @@ export default function DashboardPage() {
         </div>
       ) : null}
 
-      <div className="rounded-xl border border-[#E5E7EB] bg-white p-5">
-        <h2 className="mb-4 text-sm font-semibold text-[#1F2937]">Quick Links</h2>
+      <div className="rounded-xl border border-border bg-card p-5">
+        <h2 className="mb-4 text-sm font-semibold text-foreground">Quick Links</h2>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           <a
             href="/admin/orders"
-            className="rounded-lg border border-[#E5E7EB] p-4 text-center transition hover:border-[#B56A45]/30 hover:bg-[#F8EDE6]"
+            className="rounded-lg border border-border p-4 text-center transition hover:border-primary/30 hover:bg-background"
           >
-            <ShoppingCart className="mx-auto mb-2 h-5 w-5 text-[#B56A45]" />
+            <ShoppingCart className="mx-auto mb-2 h-5 w-5 text-primary" />
             <p className="text-sm font-medium">Manage Orders</p>
           </a>
           <a
             href="/admin/products"
-            className="rounded-lg border border-[#E5E7EB] p-4 text-center transition hover:border-[#B56A45]/30 hover:bg-[#F8EDE6]"
+            className="rounded-lg border border-border p-4 text-center transition hover:border-primary/30 hover:bg-background"
           >
-            <Package className="mx-auto mb-2 h-5 w-5 text-[#B56A45]" />
+            <Package className="mx-auto mb-2 h-5 w-5 text-primary" />
             <p className="text-sm font-medium">Manage Products</p>
           </a>
           <a
             href="/admin/users"
-            className="rounded-lg border border-[#E5E7EB] p-4 text-center transition hover:border-[#B56A45]/30 hover:bg-[#F8EDE6]"
+            className="rounded-lg border border-border p-4 text-center transition hover:border-primary/30 hover:bg-background"
           >
-            <Users className="mx-auto mb-2 h-5 w-5 text-[#B56A45]" />
+            <Users className="mx-auto mb-2 h-5 w-5 text-primary" />
             <p className="text-sm font-medium">Manage Users</p>
           </a>
         </div>

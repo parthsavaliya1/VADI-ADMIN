@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
 import {
   ArrowLeft,
   Plus,
@@ -46,6 +47,10 @@ export default function EditProductClient({
   productId: string;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
+  const { data: session } = useSession();
+  const isSeller = pathname.startsWith("/admin/seller");
+  const sellerAccountId = session?.user?.role === "seller" ? session.user.id : "";
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -99,7 +104,7 @@ export default function EditProductClient({
   const fetchProduct = async () => {
     setFetching(true);
     try {
-      const { data } = await API.get(`/api/admin/products/${productId}`);
+      const { data } = await API.get(isSeller ? `/products/${productId}` : `/api/admin/products/${productId}`);
       if (data.success && data.data) {
         const product = data.data;
 
@@ -152,13 +157,13 @@ export default function EditProductClient({
 
   useEffect(() => {
     fetchCategories();
-    fetchSellers();
+    if (!isSeller) fetchSellers();
     fetchProduct();
-  }, [productId]);
+  }, [productId, isSeller]);
 
   const fetchCategories = async () => {
     try {
-      const { data } = await API.get("/api/admin/categories", {
+      const { data } = await API.get(isSeller ? "/categories" : "/api/admin/categories", {
         params: { isActive: "true" },
       });
       if (data.success) {
@@ -352,7 +357,7 @@ export default function EditProductClient({
   };
 
   const validateBeforeSubmit = () => {
-    if (!formData.sellerId.trim()) {
+    if (isSeller ? !sellerAccountId : !formData.sellerId.trim()) {
       alert("Seller is required");
       return false;
     }
@@ -423,9 +428,9 @@ export default function EditProductClient({
         unit: formData.unit,
         image: formData.image,
         images: formData.images,
-        featured: formData.featured,
-        trending: formData.trending,
-        bestDeal: formData.bestDeal,
+        featured: isSeller ? false : formData.featured,
+        trending: isSeller ? false : formData.trending,
+        bestDeal: isSeller ? false : formData.bestDeal,
         isOrganic: formData.isOrganic,
         isActive: formData.isActive,
         offerEndsAt: formData.offerEndsAt.trim()
@@ -447,7 +452,7 @@ export default function EditProductClient({
         expiryRequired: formData.expiryRequired,
         storageInstructions: formData.storageInstructions,
         seller: {
-          sellerId: formData.sellerId,
+          sellerId: isSeller ? sellerAccountId : formData.sellerId,
         },
         variants: variants.map((variant) => ({
           ...variant,
@@ -460,10 +465,13 @@ export default function EditProductClient({
         })),
       };
 
-      const { data } = await API.put(`/api/admin/products/${productId}`, payload);
+      const { data } = await API.put(
+        isSeller ? `/sellers/me/products/${productId}` : `/api/admin/products/${productId}`,
+        isSeller ? { ...payload, sellerId: sellerAccountId } : payload,
+      );
 
       if (data.success) {
-        router.push("/admin/products");
+        router.push(isSeller ? "/admin/seller/products" : "/admin/products");
       } else {
         alert(data.message || "Failed to update product");
       }
@@ -491,7 +499,7 @@ export default function EditProductClient({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <Link
-            href="/admin/products"
+            href={isSeller ? "/admin/seller/products" : "/admin/products"}
             className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition mb-4"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -871,7 +879,7 @@ export default function EditProductClient({
               </div>
 
               {/* Seller Information */}
-              <div className="bg-card rounded-xl shadow-sm border p-6">
+              {!isSeller && <div className="bg-card rounded-xl shadow-sm border p-6">
                 <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
                   <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
                     <span className="text-primary font-bold">3</span>
@@ -902,7 +910,7 @@ export default function EditProductClient({
                     </select>
                   </div>
                 </div>
-              </div>
+              </div>}
 
               {/* Additional Details */}
               <div className="bg-card rounded-xl shadow-sm border p-6">
@@ -1272,6 +1280,8 @@ export default function EditProductClient({
                     </div>
                   </label>
 
+                  {!isSeller ? (
+                    <>
                   <label className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg cursor-pointer hover:bg-muted/50 transition">
                     <input
                       type="checkbox"
@@ -1319,6 +1329,8 @@ export default function EditProductClient({
                       </div>
                     </div>
                   </label>
+                    </>
+                  ) : null}
 
                   <label className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg cursor-pointer hover:bg-muted/50 transition">
                     <input
@@ -1364,7 +1376,7 @@ export default function EditProductClient({
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
               <div className="flex items-center justify-between">
                 <Link
-                  href="/admin/products"
+                  href={isSeller ? "/admin/seller/products" : "/admin/products"}
                   className="px-6 py-3 border rounded-lg hover:bg-muted transition font-medium"
                 >
                   Cancel
