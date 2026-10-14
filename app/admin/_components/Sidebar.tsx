@@ -17,6 +17,8 @@ import {
   Timer,
   LayoutGrid,
   Palette,
+  Ticket,
+  Undo2,
   Store,
   Truck,
   X,
@@ -72,6 +74,16 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
       name: "Payment rules",
       href: "/admin/commission",
       icon: Percent,
+    },
+    {
+      name: "Coupons",
+      href: "/admin/coupons",
+      icon: Ticket,
+    },
+    {
+      name: "Returns",
+      href: "/admin/returns",
+      icon: Undo2,
     },
     {
       name: "Users",
