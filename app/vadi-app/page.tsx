@@ -2,10 +2,16 @@ import type { Metadata } from "next";
 import { VadiAppMarketingClient } from "./VadiAppMarketingClient";
 
 export const metadata: Metadata = {
-  title: "VADI App — Marketing",
+  title: "VADI Fresh — Farm-fresh groceries delivered in hours",
   description:
-    "Marketing and design preview for the VADI consumer app. No commerce or account actions.",
-  robots: { index: false, follow: false },
+    "Download the VADI Fresh app to order hand-picked vegetables, fruits, dairy and pantry staples straight from 200+ local Gujarat farms — harvested within 24 hours and delivered to your door.",
+  icons: { icon: "/vadi-logo.png", apple: "/vadi-logo.png" },
+  openGraph: {
+    title: "VADI Fresh — Farm-fresh groceries delivered in hours",
+    description:
+      "Farm-fresh organic produce delivered to your door, through one beautifully simple app.",
+    images: ["/vadi-logo-full.png"],
+  },
 };
 
 export default function VadiAppMarketingPage() {
