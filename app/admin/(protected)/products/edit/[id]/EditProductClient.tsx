@@ -35,6 +35,7 @@ type Variant = {
   price: number;
   stock: number;
   lowStockThreshold: number;
+  expiresAt?: string;
   sku: string;
   image: string;
   isDefault: boolean;
@@ -91,6 +92,7 @@ export default function EditProductClient({
       price: 0,
       stock: 0,
       lowStockThreshold: 5,
+      expiresAt: "",
       sku: "",
       image: "",
       isDefault: true,
@@ -144,6 +146,7 @@ export default function EditProductClient({
             ...variant,
             sku: variant.sku || "",
             image: variant.image || "",
+            expiresAt: variant.expiresAt ? String(variant.expiresAt).slice(0, 10) : "",
           })),
         );
       }
@@ -271,6 +274,7 @@ export default function EditProductClient({
         price: 0,
         stock: 0,
         lowStockThreshold: 5,
+        expiresAt: "",
         sku: "",
         image: "",
         isDefault: false,
@@ -461,6 +465,7 @@ export default function EditProductClient({
           price: Number(variant.price),
           stock: Number(variant.stock),
           lowStockThreshold: Number(variant.lowStockThreshold),
+          expiresAt: variant.expiresAt ? new Date(variant.expiresAt) : null,
           image: variant.image || "",
         })),
       };
@@ -835,6 +840,18 @@ export default function EditProductClient({
                                      focus:outline-none focus:ring-2 focus:ring-primary/50 transition text-sm"
                           />
                         </div>
+                      </div>
+
+                      <div className="mt-4">
+                        <label className="block text-xs font-medium mb-1.5 text-muted-foreground">
+                          Expiry date
+                        </label>
+                        <input
+                          type="date"
+                          value={variant.expiresAt || ""}
+                          onChange={(e) => updateVariant(index, "expiresAt", e.target.value)}
+                          className="w-full max-w-xs px-3 py-2 rounded-lg border bg-background text-sm"
+                        />
                       </div>
 
                       <div className="mt-4">

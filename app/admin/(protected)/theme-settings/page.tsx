@@ -11,13 +11,17 @@ import {
   type ThemeKey,
   type ThemePreview,
 } from "@/lib/appTheme";
+import { ThemePreviewWeather } from "@/app/SeasonalWeather";
 
 function ThemeSwatches({ theme }: { theme: ThemePreview }) {
   return (
     <div
-      className="overflow-hidden rounded-lg border"
+      className="relative overflow-hidden rounded-lg border"
       style={{ backgroundColor: theme.page, borderColor: theme.soft }}
     >
+      {(theme.key === "winter" || theme.key === "summer" || theme.key === "monsoon") && (
+        <ThemePreviewWeather theme={theme.key} />
+      )}
       <div className="flex items-center justify-between px-3 pt-3">
         <span className="text-xs font-semibold" style={{ color: theme.ink }}>
           Farm Fresh
@@ -110,7 +114,8 @@ export default function ThemeSettingsPage() {
         <h1 className="text-3xl font-bold">Theme</h1>
         <p className="text-muted-foreground mt-1">
           Pick the colour combination used across the mobile app, this admin
-          panel and the website. Layout and content stay the same; only colours change.
+          panel and the website. Winter, Summer and Monsoon also play a light
+          animation (snow, sun or rain).
         </p>
       </div>
 
@@ -143,6 +148,11 @@ export default function ThemeSettingsPage() {
                       {saved === theme.key && (
                         <span className="ml-2 rounded-full bg-secondary px-2 py-0.5 text-[10px] font-semibold text-foreground">
                           Current
+                        </span>
+                      )}
+                      {theme.animated && (
+                        <span className="ml-2 rounded-full bg-secondary px-2 py-0.5 text-[10px] font-semibold text-foreground">
+                          Animated
                         </span>
                       )}
                     </div>

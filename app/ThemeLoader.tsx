@@ -7,6 +7,7 @@ import {
   applyTheme,
   isThemeKey,
 } from "@/lib/appTheme";
+import SeasonalWeather from "./SeasonalWeather";
 
 const API_BASE =
   process.env.NEXT_PUBLIC_API_URL || "https://vadi-backend.onrender.com";
@@ -40,5 +41,5 @@ export default function ThemeLoader() {
     };
   }, []);
 
-  return null;
+  return <SeasonalWeather />;
 }

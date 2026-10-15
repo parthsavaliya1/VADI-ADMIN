@@ -193,6 +193,208 @@ html[data-theme="teal-pistachio"] {
   --ring: 162 64.6% 25.5%;
 }
 
+html[data-theme="winter"] {
+  --background: 210 28% 97%;
+  --foreground: 208 42% 16%;
+  --card: 0 0% 100%;
+  --card-foreground: 208 42% 16%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 208 42% 16%;
+  --primary: 211 64% 34%;
+  --primary-dark: 211 64% 25%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 208 48% 92%;
+  --secondary-foreground: 208 42% 16%;
+  --muted: 208 48% 92%;
+  --muted-foreground: 210 18% 40%;
+  --accent: 208 52% 91%;
+  --accent-foreground: 208 42% 16%;
+  --border: 208 32% 84%;
+  --input: 208 32% 84%;
+  --ring: 211 64% 34%;
+}
+
+html[data-theme="summer"] {
+  --background: 36 100% 95%;
+  --foreground: 29 57% 15%;
+  --card: 0 0% 100%;
+  --card-foreground: 29 57% 15%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 29 57% 15%;
+  --primary: 28 76% 50%;
+  --primary-dark: 27 82% 40%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 35 100% 89%;
+  --secondary-foreground: 29 57% 15%;
+  --muted: 35 100% 89%;
+  --muted-foreground: 30 30% 42%;
+  --accent: 39 100% 56%;
+  --accent-foreground: 29 57% 15%;
+  --border: 33 59% 85%;
+  --input: 33 59% 85%;
+  --ring: 28 76% 50%;
+}
+
+html[data-theme="monsoon"] {
+  --background: 204 48% 94%;
+  --foreground: 201 52% 13%;
+  --card: 0 0% 100%;
+  --card-foreground: 201 52% 13%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 201 52% 13%;
+  --primary: 197 82% 28%;
+  --primary-dark: 197 84% 20%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 200 42% 91%;
+  --secondary-foreground: 201 52% 13%;
+  --muted: 200 42% 91%;
+  --muted-foreground: 200 18% 36%;
+  --accent: 198 45% 90%;
+  --accent-foreground: 201 52% 16%;
+  --destructive: 0 72% 50%;
+  --destructive-foreground: 0 0% 100%;
+  --success: 168 55% 32%;
+  --success-foreground: 0 0% 100%;
+  --border: 200 28% 84%;
+  --input: 200 28% 84%;
+  --ring: 197 82% 28%;
+}
+
+/* Weather motion is rendered by SeasonalWeather so it is not lost in the CSS build. */
+.vadi-weather {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 30;
+}
+
+.vadi-weather-sun {
+  position: absolute;
+  top: -48px;
+  right: -36px;
+  width: 180px;
+  height: 180px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(255, 196, 64, 0.55), rgba(255, 196, 64, 0) 68%);
+  animation: vadi-sun 6s ease-in-out infinite;
+}
+
+.vadi-flake,
+.vadi-drop-fall,
+.vadi-mote {
+  position: absolute;
+  top: -28px;
+  left: var(--x);
+  animation-delay: var(--delay);
+  animation-duration: var(--dur);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+.vadi-flake {
+  color: #f7fbff;
+  filter: drop-shadow(0 1px 1px rgba(40, 80, 120, 0.35));
+  opacity: var(--op);
+  animation-name: vadi-snow;
+}
+
+.vadi-flake svg {
+  display: block;
+}
+
+.vadi-drop-fall {
+  animation-name: vadi-rain;
+}
+
+.vadi-drop {
+  display: block;
+  width: var(--size);
+  height: var(--size);
+  background: linear-gradient(135deg, #f4fbff 0%, #7ec8ee 42%, #2f88c0 100%);
+  border-radius: 0 70% 70% 70%;
+  transform: rotate(45deg);
+  box-shadow: inset -1px -1px 0 rgba(255, 255, 255, 0.65);
+}
+
+.vadi-mote {
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(255, 176, 40, 0.55);
+  animation-name: vadi-drift;
+}
+
+.vadi-weather-card {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.vadi-weather-card .vadi-flake {
+  animation-name: vadi-snow-card;
+}
+
+.vadi-weather-card .vadi-drop-fall {
+  animation-name: vadi-rain-card;
+}
+
+.vadi-weather-card .vadi-sun-spot {
+  position: absolute;
+  top: -10px;
+  right: -8px;
+  width: 54px;
+  height: 54px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(255, 196, 64, 0.8), rgba(255, 196, 64, 0) 70%);
+  animation: vadi-sun 3s ease-in-out infinite;
+}
+
+@keyframes vadi-snow {
+  0% { transform: translate3d(0, -8vh, 0) rotate(0deg); }
+  50% { transform: translate3d(var(--drift), 50vh, 0) rotate(180deg); }
+  100% { transform: translate3d(0, 108vh, 0) rotate(360deg); }
+}
+
+@keyframes vadi-snow-card {
+  0% { transform: translate3d(0, -16px, 0) rotate(0deg); }
+  100% { transform: translate3d(var(--drift), 150px, 0) rotate(300deg); }
+}
+
+@keyframes vadi-rain {
+  0% { transform: translate3d(12px, -12vh, 0); }
+  100% { transform: translate3d(-36px, 110vh, 0); }
+}
+
+@keyframes vadi-rain-card {
+  0% { transform: translate3d(6px, -14px, 0); }
+  100% { transform: translate3d(-10px, 150px, 0); }
+}
+
+@keyframes vadi-sun {
+  0%, 100% { opacity: 0.75; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.06); }
+}
+
+@keyframes vadi-drift {
+  0% { transform: translate3d(0, 10vh, 0); opacity: 0; }
+  20% { opacity: 0.8; }
+  100% { transform: translate3d(-20px, -30vh, 0); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vadi-flake,
+  .vadi-drop-fall,
+  .vadi-mote,
+  .vadi-weather-sun,
+  .vadi-sun-spot {
+    animation: none;
+  }
+}
+
 /* =====================================================
    App-level layout helpers (Vite-style defaults)
    ===================================================== */

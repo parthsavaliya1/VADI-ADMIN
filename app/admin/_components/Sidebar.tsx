@@ -21,6 +21,9 @@ import {
   Undo2,
   Store,
   Truck,
+  MessageCircle,
+  Banknote,
+  Star,
   X,
 } from "lucide-react";
 
@@ -84,6 +87,21 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
       name: "Returns",
       href: "/admin/returns",
       icon: Undo2,
+    },
+    {
+      name: "Payouts",
+      href: "/admin/payouts",
+      icon: Banknote,
+    },
+    {
+      name: "Reviews",
+      href: "/admin/reviews",
+      icon: Star,
+    },
+    {
+      name: "Support",
+      href: "/admin/support",
+      icon: MessageCircle,
     },
     {
       name: "Users",

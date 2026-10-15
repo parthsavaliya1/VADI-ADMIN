@@ -24,6 +24,11 @@ export default function SellerEarningsPage() {
   const sellerId = session?.user?.role === "seller" ? session.user.id : "";
   const [rows, setRows] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
+  const [upi, setUpi] = useState("");
+  const [accountName, setAccountName] = useState("");
+  const [accountNumber, setAccountNumber] = useState("");
+  const [ifsc, setIfsc] = useState("");
+  const [amount, setAmount] = useState("");
 
   useEffect(() => {
     if (!sellerId) return;
@@ -31,6 +36,15 @@ export default function SellerEarningsPage() {
       .then(({ data }) => setRows(data?.data || []))
       .catch(() => setRows([]))
       .finally(() => setLoading(false));
+    API.get("/sellers/me/payouts", { params: { sellerId } })
+      .then(({ data }) => {
+        const bank = data?.bank || {};
+        setUpi(bank.upi || "");
+        setAccountName(bank.accountName || "");
+        setAccountNumber(bank.accountNumber || "");
+        setIfsc(bank.ifsc || "");
+      })
+      .catch(() => undefined);
   }, [sellerId]);
 
   const credited = rows.filter((row) => row.status === "credited");
@@ -95,6 +109,43 @@ export default function SellerEarningsPage() {
           </table>
         </div>
       )}
+
+      <div className="rounded-xl border border-border bg-card p-5 space-y-3">
+        <h2 className="text-lg font-semibold">Payout</h2>
+        <p className="text-sm text-muted-foreground">
+          Save a bank account or UPI id, then request a payout. Admin marks it paid after the transfer.
+        </p>
+        <input className="w-full rounded-md border px-3 py-2" placeholder="Account name" value={accountName} onChange={(e) => setAccountName(e.target.value)} />
+        <input className="w-full rounded-md border px-3 py-2" placeholder="Account number" value={accountNumber} onChange={(e) => setAccountNumber(e.target.value)} />
+        <input className="w-full rounded-md border px-3 py-2" placeholder="IFSC" value={ifsc} onChange={(e) => setIfsc(e.target.value)} />
+        <input className="w-full rounded-md border px-3 py-2" placeholder="UPI id" value={upi} onChange={(e) => setUpi(e.target.value)} />
+        <button
+          type="button"
+          className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground"
+          onClick={async () => {
+            await API.put("/sellers/me/bank", { sellerId, accountName, accountNumber, ifsc, upi });
+            alert("Bank details saved");
+          }}
+        >
+          Save bank details
+        </button>
+        <input className="w-full rounded-md border px-3 py-2" placeholder="Amount" value={amount} onChange={(e) => setAmount(e.target.value)} />
+        <button
+          type="button"
+          className="rounded-md border px-4 py-2 text-sm"
+          onClick={async () => {
+            try {
+              await API.post("/sellers/me/payouts", { sellerId, amount: Number(amount) });
+              alert("Payout requested");
+              setAmount("");
+            } catch (error: any) {
+              alert(error?.response?.data?.message || "Could not request payout");
+            }
+          }}
+        >
+          Request payout
+        </button>
+      </div>
     </div>
   );
 }
