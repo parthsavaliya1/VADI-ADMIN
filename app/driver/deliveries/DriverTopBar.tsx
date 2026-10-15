@@ -7,7 +7,7 @@ export default function DriverTopBar() {
   const { data } = useSession();
 
   return (
-    <header className="border-b bg-card px-6 py-4 flex items-center justify-between shrink-0">
+    <header className="flex shrink-0 items-center justify-between gap-3 border-b bg-card px-4 py-3 sm:px-6 sm:py-4">
       <div className="flex items-center gap-3 min-w-0">
         <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
           <Truck className="h-5 w-5" />

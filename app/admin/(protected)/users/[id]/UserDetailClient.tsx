@@ -74,8 +74,8 @@ export default function UserDetailClient({ userId }: { userId: string }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4 py-8">
+    <div className="min-w-0 w-full">
+      <div className="mx-auto w-full min-w-0 max-w-4xl py-2 sm:py-4">
         {/* Header */}
         <div className="mb-8">
           <Link
@@ -86,7 +86,7 @@ export default function UserDetailClient({ userId }: { userId: string }) {
             Back to Users
           </Link>
 
-          <h1 className="text-3xl font-bold">User Details</h1>
+          <h1 className="text-2xl font-bold sm:text-3xl">User Details</h1>
           <p className="text-muted-foreground mt-1">View user information</p>
         </div>
 

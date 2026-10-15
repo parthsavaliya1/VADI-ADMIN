@@ -454,6 +454,14 @@ body {
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
+@layer base {
+  button:not(:disabled),
+  input:where([type="button"], [type="reset"], [type="submit"]):not(:disabled),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+}
+
 h1,
 h2,
 h3,
@@ -518,6 +526,59 @@ h6 {
   background-color: hsl(var(--background));
   font-family: Inter, "Segoe UI", ui-sans-serif, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  max-width: 100%;
+}
+
+/* Keep every admin screen inside the phone width. Form controls and
+   grid columns otherwise keep a large minimum width and spill past the
+   right padding. */
+.vadi-console,
+.vadi-console main,
+.vadi-console main > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.vadi-console .grid,
+.vadi-console .overflow-x-auto,
+.vadi-console .overflow-auto,
+.vadi-console .overflow-hidden {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.vadi-console .grid > *,
+.vadi-console .flex > .flex-1,
+.vadi-console .flex > .min-w-0,
+.vadi-console .flex > .relative {
+  min-width: 0;
+}
+
+.vadi-console input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+.vadi-console select,
+.vadi-console textarea {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.vadi-console img,
+.vadi-console video {
+  max-width: 100%;
+}
+
+.vadi-console h1,
+.vadi-console h2,
+.vadi-console p,
+.vadi-console a,
+.vadi-console label {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 639px) {
+  .vadi-console .p-6 {
+    padding: 1rem;
+  }
 }
 
 .vadi-console h1,

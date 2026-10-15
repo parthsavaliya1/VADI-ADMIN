@@ -194,7 +194,7 @@ export default function NotificationsPage() {
         <div className="bg-card rounded-xl shadow-sm border p-4">
           <p className="text-sm font-medium">{message}</p>
           {stats && (
-            <div className="mt-3 grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+            <div className="mt-3 grid grid-cols-1 gap-3 text-sm min-[420px]:grid-cols-2 md:grid-cols-4">
               <div className="rounded-lg border p-3">
                 <p className="text-muted-foreground text-xs">Total Tokens</p>
                 <p className="font-semibold">{stats.totalTokens}</p>

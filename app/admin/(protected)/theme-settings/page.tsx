@@ -109,9 +109,9 @@ export default function ThemeSettingsPage() {
   }
 
   return (
-    <div className="max-w-4xl space-y-6">
+    <div className="min-w-0 max-w-4xl space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Theme</h1>
+        <h1 className="text-2xl font-bold sm:text-3xl">Theme</h1>
         <p className="text-muted-foreground mt-1">
           Pick the colour combination used across the mobile app, this admin
           panel and the website. Winter, Summer and Monsoon also play a light
@@ -179,7 +179,7 @@ export default function ThemeSettingsPage() {
           type="button"
           onClick={handleSave}
           disabled={saving || selected === saved}
-          className="px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition disabled:opacity-50 font-medium flex items-center gap-2"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 font-medium text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50 sm:w-auto"
         >
           {saving ? (
             <>

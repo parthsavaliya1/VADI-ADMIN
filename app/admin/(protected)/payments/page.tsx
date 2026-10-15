@@ -153,8 +153,8 @@ export default function PaymentsClient() {
 
       {/* Filters */}
       <div className="bg-card rounded-xl shadow-sm border p-4 space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="relative flex-1 max-w-sm">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="relative min-w-0 flex-1 sm:max-w-sm">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <input
               type="text"
@@ -167,7 +167,7 @@ export default function PaymentsClient() {
 
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="ml-4 p-2 hover:bg-muted rounded-lg transition flex items-center gap-2"
+            className="flex shrink-0 items-center gap-2 rounded-lg p-2 transition hover:bg-muted"
           >
             <Filter className="h-4 w-4" />
             {activeFiltersCount > 0 && (

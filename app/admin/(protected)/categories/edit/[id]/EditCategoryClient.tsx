@@ -126,8 +126,8 @@ export default function EditCategoryClient({
   /* ================= UI ================= */
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4 py-8">
+    <div className="min-w-0 w-full">
+      <div className="mx-auto w-full min-w-0 max-w-4xl py-2 sm:py-4">
         {/* Header */}
         <div className="mb-8">
           <Link
@@ -138,7 +138,7 @@ export default function EditCategoryClient({
             Back to Categories
           </Link>
 
-          <h1 className="text-3xl font-bold">Edit Category</h1>
+          <h1 className="text-2xl font-bold sm:text-3xl">Edit Category</h1>
           <p className="text-muted-foreground mt-1">
             Update category information
           </p>
@@ -202,7 +202,7 @@ export default function EditCategoryClient({
                     }))
                   }
                   className="absolute top-2 right-2 p-2 bg-red-500 text-white rounded-full 
-                             opacity-0 group-hover:opacity-100 transition"
+                             opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -270,10 +270,10 @@ export default function EditCategoryClient({
           </div>
 
           {/* Bottom Actions */}
-          <div className="flex justify-between pt-6 border-t">
+          <div className="flex flex-col-reverse gap-3 border-t pt-6 sm:flex-row sm:items-center sm:justify-between">
             <Link
               href="/admin/categories"
-              className="px-6 py-3 border rounded-lg hover:bg-muted transition font-medium"
+              className="inline-flex w-full items-center justify-center rounded-lg border px-6 py-3 font-medium transition hover:bg-muted sm:w-auto"
             >
               Cancel
             </Link>
@@ -281,9 +281,7 @@ export default function EditCategoryClient({
             <button
               type="submit"
               disabled={loading || uploading}
-              className="px-8 py-3 bg-primary text-primary-foreground rounded-lg 
-                         hover:bg-primary/90 transition disabled:opacity-50 
-                         font-medium flex items-center gap-2"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-8 py-3 font-medium text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50 sm:w-auto"
             >
               {loading ? (
                 <>

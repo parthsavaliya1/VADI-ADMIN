@@ -50,7 +50,7 @@ export default function SellerProductsPage() {
             These are only your products. Because your shop is approved, new products are live right away.
           </p>
         </div>
-        <Link href="/admin/seller/products/add" className="inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-dark">
+        <Link href="/admin/seller/products/add" className="inline-flex w-full items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary-dark sm:w-auto">
           Add product
         </Link>
       </div>

@@ -144,8 +144,8 @@ export default function PaymentDetailClient({
     STATUS_STYLES[payment.status] ?? "bg-gray-100 text-gray-800";
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4 py-8">
+    <div className="min-w-0 w-full">
+      <div className="mx-auto w-full min-w-0 max-w-4xl py-2 sm:py-4">
         {/* Header */}
         <div className="mb-8">
           <Link

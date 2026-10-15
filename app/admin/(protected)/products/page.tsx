@@ -175,9 +175,7 @@ export default function ProductsClient() {
 
         <Link
           href="/admin/products/add"
-          className="px-4 py-2.5 bg-primary text-primary-foreground rounded-lg 
-                     hover:bg-primary/90 transition flex items-center justify-center gap-2 font-medium
-                     shadow-sm hover:shadow-md"
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 font-medium text-primary-foreground shadow-sm transition hover:bg-primary/90 hover:shadow-md sm:w-auto"
         >
           <Plus className="h-4 w-4" />
           Add Product

@@ -500,8 +500,8 @@ export default function EditProductClient({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-w-0 w-full">
+      <div className="mx-auto w-full min-w-0 max-w-7xl py-2 sm:py-4">
         <div className="mb-8">
           <Link
             href={isSeller ? "/admin/seller/products" : "/admin/products"}
@@ -512,7 +512,7 @@ export default function EditProductClient({
           </Link>
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-foreground">
+              <h1 className="text-2xl font-bold text-foreground sm:text-3xl">
                 Edit Product
               </h1>
               <p className="text-muted-foreground mt-1">
@@ -523,9 +523,9 @@ export default function EditProductClient({
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid lg:grid-cols-3 gap-6">
+          <div className="grid min-w-0 gap-6 lg:grid-cols-3">
             {/* Left Column - Main Info */}
-            <div className="lg:col-span-2 space-y-6">
+            <div className="min-w-0 space-y-6 lg:col-span-2">
               {/* Basic Information */}
               <div className="bg-card rounded-xl shadow-sm border p-6">
                 <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
@@ -629,7 +629,7 @@ export default function EditProductClient({
 
               {/* Product Variants */}
               <div className="bg-card rounded-xl shadow-sm border p-6">
-                <div className="flex items-center justify-between mb-6">
+                <div className="mb-6 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <h2 className="text-xl font-semibold flex items-center gap-2">
                     <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
                       <span className="text-primary font-bold">2</span>
@@ -639,8 +639,7 @@ export default function EditProductClient({
                   <button
                     type="button"
                     onClick={addVariant}
-                    className="px-4 py-2 bg-primary text-primary-foreground rounded-lg 
-                             hover:bg-primary/90 transition flex items-center gap-2 text-sm font-medium"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:bg-primary/90 sm:w-auto"
                   >
                     <Plus className="h-4 w-4" />
                     Add Variant
@@ -651,13 +650,13 @@ export default function EditProductClient({
                   {variants.map((variant, index) => (
                     <div
                       key={index}
-                      className="border-2 border-dashed rounded-xl p-5 hover:border-primary/50 transition relative bg-muted/20"
+                      className="relative rounded-xl border-2 border-dashed bg-muted/20 p-4 transition hover:border-primary/50"
                     >
                       {variants.length > 1 && (
                         <button
                           type="button"
                           onClick={() => removeVariant(index)}
-                          className="absolute -top-2 -right-2 p-1.5 bg-red-500 text-white rounded-full 
+                          className="absolute right-2 top-2 z-10 rounded-full bg-red-500 p-1.5 text-white 
                                    hover:bg-red-600 transition shadow-lg"
                         >
                           <X className="h-4 w-4" />
@@ -745,7 +744,7 @@ export default function EditProductClient({
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div className="grid grid-cols-1 gap-4 min-[420px]:grid-cols-2 md:grid-cols-4">
                         <div>
                           <label className="block text-xs font-medium mb-1.5 text-muted-foreground">
                             MRP *
@@ -1066,7 +1065,7 @@ export default function EditProductClient({
                     <label className="block text-sm font-medium mb-2">
                       Tags
                     </label>
-                    <div className="flex gap-2 mb-3">
+                    <div className="mb-3 flex flex-col gap-2 sm:flex-row">
                       <input
                         type="text"
                         value={tagInput}
@@ -1084,8 +1083,7 @@ export default function EditProductClient({
                       <button
                         type="button"
                         onClick={addTag}
-                        className="px-6 py-3 bg-primary text-primary-foreground rounded-lg 
-                                 hover:bg-primary/90 transition font-medium"
+                        className="w-full rounded-lg bg-primary px-6 py-3 font-medium text-primary-foreground transition hover:bg-primary/90 sm:w-auto"
                       >
                         Add
                       </button>
@@ -1114,7 +1112,7 @@ export default function EditProductClient({
                     <label className="block text-sm font-medium mb-2">
                       Search Keywords
                     </label>
-                    <div className="flex gap-2 mb-3">
+                    <div className="mb-3 flex flex-col gap-2 sm:flex-row">
                       <input
                         type="text"
                         value={keywordInput}
@@ -1132,8 +1130,7 @@ export default function EditProductClient({
                       <button
                         type="button"
                         onClick={addKeyword}
-                        className="px-6 py-3 bg-primary text-primary-foreground rounded-lg 
-                                 hover:bg-primary/90 transition font-medium"
+                        className="w-full rounded-lg bg-primary px-6 py-3 font-medium text-primary-foreground transition hover:bg-primary/90 sm:w-auto"
                       >
                         Add
                       </button>
@@ -1163,7 +1160,7 @@ export default function EditProductClient({
             </div>
 
             {/* Right Column - Images & Status */}
-            <div className="space-y-6">
+            <div className="min-w-0 space-y-6">
               {/* Product Images */}
               <div className="bg-card rounded-xl shadow-sm border p-6">
                 <h2 className="text-lg font-semibold mb-4">Product Images</h2>
@@ -1187,7 +1184,7 @@ export default function EditProductClient({
                             setFormData((prev) => ({ ...prev, image: "" }))
                           }
                           className="absolute top-2 right-2 p-2 bg-red-500 text-white rounded-full 
-                                   opacity-0 group-hover:opacity-100 transition shadow-lg"
+                                   opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition shadow-lg"
                         >
                           <X className="h-4 w-4" />
                         </button>
@@ -1256,8 +1253,8 @@ export default function EditProductClient({
                         <button
                           type="button"
                           onClick={() => removeImage(img)}
-                          className="absolute -top-1 -right-1 p-1 bg-red-500 text-white rounded-full 
-                                   opacity-0 group-hover:opacity-100 transition shadow-lg"
+                          className="absolute right-1 top-1 z-10 rounded-full bg-red-500 p-1 text-white 
+                                   opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition shadow-lg"
                         >
                           <X className="h-3 w-3" />
                         </button>
@@ -1389,21 +1386,19 @@ export default function EditProductClient({
           </div>
 
           {/* Sticky Bottom Actions */}
-          <div className="mt-10 border-t pt-6">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-              <div className="flex items-center justify-between">
+          <div className="mt-8 border-t pt-6">
+            <div className="w-full min-w-0 py-2">
+              <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <Link
                   href={isSeller ? "/admin/seller/products" : "/admin/products"}
-                  className="px-6 py-3 border rounded-lg hover:bg-muted transition font-medium"
+                  className="inline-flex w-full items-center justify-center rounded-lg border px-6 py-3 font-medium transition hover:bg-muted sm:w-auto"
                 >
                   Cancel
                 </Link>
                 <button
                   type="submit"
                   disabled={loading || uploading}
-                  className="px-8 py-3 bg-primary text-primary-foreground rounded-lg 
-                   hover:bg-primary/90 transition disabled:opacity-50 font-medium
-                   flex items-center gap-2 shadow-lg"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-8 py-3 font-medium text-primary-foreground shadow-lg transition hover:bg-primary/90 disabled:opacity-50 sm:w-auto"
                 >
                   {loading ? (
                     <>

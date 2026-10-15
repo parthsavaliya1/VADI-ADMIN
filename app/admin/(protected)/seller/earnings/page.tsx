@@ -77,7 +77,7 @@ export default function SellerEarningsPage() {
       ) : rows.length === 0 ? (
         <p className="text-sm text-muted-foreground">No paid orders yet. Earnings appear after the customer payment succeeds.</p>
       ) : (
-        <div className="overflow-hidden rounded-xl border border-border bg-card">
+        <div className="overflow-x-auto rounded-xl border border-border bg-card">
           <table className="w-full text-sm">
             <thead className="bg-background text-left text-muted-foreground">
               <tr>

@@ -24,9 +24,9 @@ export default async function DriverDeliveriesLayout({
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-muted">
+    <div className="vadi-console flex min-h-screen w-full max-w-full flex-col overflow-x-hidden bg-muted">
       <DriverTopBar />
-      <div className="flex-1 overflow-y-auto p-6">{children}</div>
+      <div className="box-border w-full min-w-0 flex-1 overflow-y-auto overflow-x-hidden px-4 py-4 sm:p-6">{children}</div>
     </div>
   );
 }
