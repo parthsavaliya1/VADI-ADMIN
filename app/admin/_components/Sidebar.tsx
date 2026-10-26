@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import {
-  Shield,
   LayoutDashboard,
   Users,
   Package,
@@ -160,12 +160,10 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
       >
         <div className="flex h-16 shrink-0 items-center justify-between gap-3 border-b border-border px-4">
           <div className="flex min-w-0 items-center gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-secondary text-primary">
-              {isSeller ? <Store size={18} /> : <Shield size={18} />}
-            </div>
+            <Image src="/vadi-logo.png" alt="VADI Fresh logo" width={500} height={500} className="h-11 w-11 shrink-0 object-contain" priority />
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold tracking-tight text-foreground">
-                VADI
+                VADI Fresh
               </p>
               <p className="truncate text-xs text-muted-foreground">
                 {isSeller ? "Seller" : "Admin"}

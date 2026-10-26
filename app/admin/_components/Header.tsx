@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
 import { Menu, ChevronDown, User, LogOut } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
@@ -59,6 +60,7 @@ export default function Header({ setOpen }: HeaderProps) {
           <Menu size={18} />
         </button>
 
+        <Image src="/vadi-logo.png" alt="VADI Fresh" width={500} height={500} className="h-10 w-10 shrink-0 object-contain md:hidden" />
         <div className="min-w-0">
           <h1 className="truncate text-[15px] font-semibold capitalize text-foreground">
             {pageTitle}

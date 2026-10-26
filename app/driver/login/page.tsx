@@ -1,7 +1,8 @@
 "use client";
 
 import { signIn } from "next-auth/react";
-import Link from "next/link";
+import { ArrowRight, LoaderCircle, Check } from "lucide-react";
+import LoginShell, { loginInput, loginButton } from "../../_components/LoginShell";
 import { useState } from "react";
 
 const API_BASE =
@@ -27,7 +28,7 @@ export default function DriverLoginPage() {
 
   const sendOtp = async () => {
     setError("");
-    if (normalized.length < 12) {
+    if (!/^\+91[6-9]\d{9}$/.test(normalized)) {
       setError("Enter a valid 10-digit mobile number");
       return;
     }
@@ -44,6 +45,7 @@ export default function DriverLoginPage() {
         return;
       }
       setLockedPhone(normalized);
+      setOtp("");
       setStep("otp");
     } catch {
       setError("Network error");
@@ -79,82 +81,28 @@ export default function DriverLoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-secondary/40 px-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-semibold tracking-tight">Delivery staff</h1>
-          <p className="text-sm text-muted-foreground mt-2">
-            Sign in with the phone number registered by your admin. OTP is sent
-            via SMS (2factor.in).
-          </p>
-        </div>
-
-        <div className="bg-card border border-border rounded-xl shadow-sm p-8">
-          {error && (
-            <div className="mb-5 bg-destructive/10 text-destructive text-sm px-4 py-2 rounded-md">
-              {error}
-            </div>
-          )}
-
-          {step === "phone" ? (
-            <>
-              <label className="text-sm font-medium block mb-2">Mobile number</label>
-              <input
-                type="tel"
-                placeholder="9876543210"
-                className="w-full px-4 py-2.5 rounded-md border border-input bg-background mb-6"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-              />
-              <button
-                type="button"
-                onClick={() => void sendOtp()}
-                disabled={loading}
-                className="w-full bg-primary text-primary-foreground py-2.5 rounded-md font-medium disabled:opacity-60"
-              >
-                {loading ? "Sending…" : "Send OTP"}
-              </button>
-            </>
-          ) : (
-            <>
-              <p className="text-sm text-muted-foreground mb-3">Code sent to {lockedPhone}</p>
-              <label className="text-sm font-medium block mb-2">6-digit OTP</label>
-              <input
-                type="text"
-                inputMode="numeric"
-                maxLength={6}
-                className="w-full px-4 py-2.5 rounded-md border border-input bg-background mb-6 tracking-widest text-lg font-mono"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
-              />
-              <button
-                type="button"
-                onClick={() => void verifyAndSignIn()}
-                disabled={loading}
-                className="w-full bg-primary text-primary-foreground py-2.5 rounded-md font-medium disabled:opacity-60"
-              >
-                {loading ? "Signing in…" : "Verify & sign in"}
-              </button>
-              <button
-                type="button"
-                className="w-full mt-3 text-sm text-muted-foreground hover:text-foreground"
-                onClick={() => {
-                  setStep("phone");
-                  setOtp("");
-                }}
-              >
-                Change number
-              </button>
-            </>
-          )}
-        </div>
-
-        <p className="text-center mt-6 text-sm">
-          <Link href="/admin/login" className="text-primary font-medium hover:underline">
-            Admin login
-          </Link>
-        </p>
-      </div>
-    </div>
+    <LoginShell driver>
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Delivery workspace</p>
+      <h2 className="mt-3 text-3xl font-semibold tracking-tight">{step === "phone" ? "Ready to get moving?" : "Check your messages"}</h2>
+      <p className="mt-2 text-sm text-muted-foreground">{step === "phone" ? "Use your registered mobile number to sign in." : `Enter the code sent to ${lockedPhone}.`}</p>
+      <ol aria-label="Sign-in progress" className="my-7 flex items-center gap-3 text-xs font-medium">
+        <li className="flex items-center gap-2 text-primary"><span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground">{step === "otp" ? <Check size={14} /> : "1"}</span>Mobile number</li>
+        <li aria-hidden className="h-px flex-1 bg-border" />
+        <li aria-current={step === "otp" ? "step" : undefined} className={`flex items-center gap-2 ${step === "otp" ? "text-primary" : "text-muted-foreground"}`}><span className={`flex h-7 w-7 items-center justify-center rounded-full ${step === "otp" ? "bg-primary text-primary-foreground" : "bg-secondary"}`}>2</span>Verify code</li>
+      </ol>
+      <form onSubmit={event => { event.preventDefault(); if (!loading) void (step === "phone" ? sendOtp() : verifyAndSignIn()); }} className="space-y-5">
+        {error && <p role="alert" className="rounded-xl bg-destructive/10 p-3 text-sm text-destructive">{error}</p>}
+        {step === "phone" ? <div>
+          <label htmlFor="phone" className="mb-2 block text-sm font-medium">Mobile number</label>
+          <input id="phone" type="tel" autoComplete="tel" required disabled={loading} placeholder="98765 43210" className={loginInput} value={phone} onChange={event => { setPhone(event.target.value); setError(""); }} />
+          <p className="mt-2 text-xs text-muted-foreground">We’ll send you a 6-digit code by SMS.</p>
+        </div> : <div>
+          <label htmlFor="otp" className="mb-2 block text-sm font-medium">Verification code</label>
+          <input id="otp" type="text" inputMode="numeric" autoComplete="one-time-code" autoFocus required pattern="[0-9]{6}" maxLength={6} disabled={loading} placeholder="000000" className={`${loginInput} text-center font-mono text-2xl tracking-[0.4em]`} value={otp} onChange={event => { setOtp(event.target.value.replace(/\D/g, "")); setError(""); }} />
+        </div>}
+        <button type="submit" disabled={loading} className={loginButton}>{loading ? <LoaderCircle size={18} className="motion-safe:animate-spin" /> : <ArrowRight size={18} />}{loading ? (step === "phone" ? "Sending code…" : "Signing in…") : (step === "phone" ? "Send verification code" : "Verify & sign in")}</button>
+        {step === "otp" && <button type="button" disabled={loading} onClick={() => { setStep("phone"); setOtp(""); setError(""); }} className="w-full rounded-lg py-2 text-sm text-muted-foreground hover:text-primary focus-visible:ring-2 focus-visible:ring-primary">Use a different number or request a new code</button>}
+      </form>
+    </LoginShell>
   );
 }

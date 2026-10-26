@@ -2,6 +2,8 @@
 
 import { signIn } from "next-auth/react";
 import { useState } from "react";
+import { Eye, EyeOff, LoaderCircle, ArrowRight } from "lucide-react";
+import LoginShell, { loginInput, loginButton } from "../../_components/LoginShell";
 
 const API_BASE =
   process.env.NEXT_PUBLIC_API_URL || "https://vadi-backend.onrender.com";
@@ -13,11 +15,13 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async () => {
     setLoading(true);
     setError("");
 
+    try {
     if (mode === "seller") {
       const check = await fetch(`${API_BASE}/sellers/login`, {
         method: "POST",
@@ -54,120 +58,36 @@ export default function LoginPage() {
     } else {
       window.location.href = "/admin/dashboard";
     }
+    } catch {
+      setError("Unable to connect. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="vadi-console flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="w-full max-w-md">
-        {/* Logo / Heading */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-semibold tracking-tight">
-            {mode === "seller" ? "Seller Panel" : "Admin Panel"}
-          </h1>
-          <p className="text-sm text-muted-foreground mt-2">
-            {mode === "seller"
-              ? "Sign in only after an admin approves your shop"
-              : "Sign in to continue"}
-          </p>
-        </div>
-
-        <div className="grid grid-cols-2 gap-2 mb-4">
-          <button
-            type="button"
-            onClick={() => { setMode("admin"); setError(""); }}
-            className={`rounded-lg border py-2 text-sm font-medium ${mode === "admin" ? "border-primary bg-primary text-white" : "border-border bg-card text-foreground"}`}
-          >
-            Admin
-          </button>
-          <button
-            type="button"
-            onClick={() => { setMode("seller"); setError(""); }}
-            className={`rounded-lg border py-2 text-sm font-medium ${mode === "seller" ? "border-primary bg-primary text-white" : "border-border bg-card text-foreground"}`}
-          >
-            Seller
-          </button>
-        </div>
-
-        {/* Card */}
-        <div className="rounded-xl border border-border bg-card p-6 sm:p-8">
-          {error && (
-            <div className="mb-5 bg-destructive/10 text-destructive text-sm px-4 py-2 rounded-md">
-              {error}
-            </div>
-          )}
-
-          {/* Email */}
-          {mode === "admin" ? (
-          <div className="mb-5">
-            <label className="text-sm font-medium block mb-2">Email</label>
-            <input
-              type="email"
-              placeholder="admin@vadi.com"
-              className="w-full px-4 py-2.5 rounded-md border border-input bg-background
-                         placeholder:text-muted-foreground
-                         focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary
-                         transition"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-          ) : (
-          <div className="mb-5">
-            <label className="text-sm font-medium block mb-2">Phone</label>
-            <input
-              type="tel"
-              placeholder="10-digit mobile"
-              className="w-full px-4 py-2.5 rounded-md border border-input bg-background
-                         placeholder:text-muted-foreground
-                         focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary
-                         transition"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-            />
-          </div>
-          )}
-
-          {/* Password */}
-          <div className="mb-6">
-            <label className="text-sm font-medium block mb-2">Password</label>
-            <input
-              type="password"
-              placeholder="Enter your password"
-              className="w-full px-4 py-2.5 rounded-md border border-input bg-background
-                         placeholder:text-muted-foreground
-                         focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary
-                         transition"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-
-          {/* Button */}
-          <button
-            onClick={handleLogin}
-            disabled={loading}
-            className="w-full rounded-lg bg-primary py-2.5 font-medium text-white
-                       transition hover:bg-primary-dark active:scale-[0.98]
-                       disabled:opacity-60"
-          >
-            {loading ? "Signing in..." : "Sign In"}
-          </button>
-        </div>
-
-        {/* Footer */}
-        <p className="text-center mt-6 text-sm">
-          <a
-            href="/driver/login"
-            className="text-primary font-medium hover:underline"
-          >
-            Delivery staff login
-          </a>
-        </p>
-
-        <p className="text-xs text-muted-foreground text-center mt-4">
-          © {new Date().getFullYear()} VADI Admin
-        </p>
+    <LoginShell>
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Store workspace</p>
+      <h2 className="mt-3 text-3xl font-semibold tracking-tight">Welcome back</h2>
+      <p className="mb-7 mt-2 text-sm text-muted-foreground">{mode === "seller" ? "Sign in to your approved shop to get started." : "Sign in to take care of your store."}</p>
+      <div className="mb-7 grid grid-cols-2 gap-1 rounded-xl bg-secondary p-1" aria-label="Sign-in role">
+        {(["admin", "seller"] as const).map(role => <button key={role} type="button" disabled={loading} aria-pressed={mode === role} onClick={() => { setMode(role); setError(""); }} className={`rounded-lg py-2.5 text-sm font-medium capitalize transition focus-visible:ring-2 focus-visible:ring-primary ${mode === role ? "bg-card text-primary shadow-sm" : "text-muted-foreground hover:text-foreground"}`}>{role}</button>)}
       </div>
-    </div>
+      <form onSubmit={event => { event.preventDefault(); if (!loading) void handleLogin(); }} className="space-y-5">
+        {error && <p role="alert" className="rounded-xl bg-destructive/10 p-3 text-sm text-destructive">{error}</p>}
+        <div>
+          <label htmlFor="identity" className="mb-2 block text-sm font-medium">{mode === "admin" ? "Email address" : "Mobile number"}</label>
+          <input key={mode} id="identity" required disabled={loading} type={mode === "admin" ? "email" : "tel"} autoComplete={mode === "admin" ? "username" : "tel"} pattern={mode === "seller" ? "[0-9+ ()-]{10,16}" : undefined} placeholder={mode === "admin" ? "you@vadi.com" : "Your registered mobile number"} className={loginInput} value={mode === "admin" ? email : phone} onChange={event => { if (mode === "admin") setEmail(event.target.value); else setPhone(event.target.value); setError(""); }} />
+        </div>
+        <div>
+          <label htmlFor="password" className="mb-2 block text-sm font-medium">Password</label>
+          <div className="relative">
+            <input id="password" required disabled={loading} type={showPassword ? "text" : "password"} autoComplete="current-password" placeholder="Enter your password" className={`${loginInput} pr-14`} value={password} onChange={event => { setPassword(event.target.value); setError(""); }} />
+            <button type="button" aria-label={showPassword ? "Hide password" : "Show password"} aria-pressed={showPassword} onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-0 rounded-r-xl px-4 text-muted-foreground hover:text-primary focus-visible:ring-2 focus-visible:ring-primary">{showPassword ? <EyeOff size={18} /> : <Eye size={18} />}</button>
+          </div>
+        </div>
+        <button type="submit" disabled={loading} className={loginButton}>{loading ? <LoaderCircle size={18} className="motion-safe:animate-spin" /> : <ArrowRight size={18} />}{loading ? "Signing in…" : `Sign in as ${mode}`}</button>
+      </form>
+    </LoginShell>
   );
 }

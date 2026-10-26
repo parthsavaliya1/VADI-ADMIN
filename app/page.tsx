@@ -1,12 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
+import HubFooter from "./_components/HubFooter";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import {
   ArrowUpRight,
   LayoutGrid,
-  Smartphone,
+  ShoppingBag,
   Truck,
   type LucideIcon,
 } from "lucide-react";
@@ -61,17 +63,16 @@ const destinations: Destination[] = [
     chip: "bg-[hsl(215_20%_94%)] text-[hsl(215_25%_28%)]",
   },
   {
-    href: "/vadi-app",
+    href: "https://vadindia.com/shop",
     shortcut: "3",
     index: "03",
-    title: "VADI App",
-    nav: "App site",
-    kicker: "Public preview",
-    description: "Public marketing preview for the consumer app story.",
-    detail:
-      "Open the marketing page that tells the consumer app story — the public face of VADI, separate from the tools behind it.",
-    points: ["Story", "Features", "Download", "FAQ"],
-    icon: Smartphone,
+    title: "VADI Shop",
+    nav: "Shop",
+    kicker: "Fresh shopping",
+    description: "Explore the VADI Fresh shop and place an order.",
+    detail: "Visit the VADI Fresh shop to browse products and find your everyday essentials.",
+    points: ["Browse", "Shop", "Order"],
+    icon: ShoppingBag,
     tile: "bg-[hsl(24_70%_94%)] text-[hsl(20_55%_38%)]",
     wash: "bg-[radial-gradient(120%_80%_at_100%_0%,hsl(24_80%_70%/0.28),transparent_55%)]",
     chip: "bg-[hsl(24_70%_94%)] text-[hsl(20_45%_34%)]",
@@ -101,7 +102,9 @@ export default function Home() {
       const hit = destinations.findIndex((item) => item.shortcut === event.key);
       if (hit >= 0) {
         event.preventDefault();
-        router.push(destinations[hit].href);
+        const href = destinations[hit].href;
+        if (href.startsWith("https://")) window.location.assign(href);
+        else router.push(href);
         return;
       }
 
@@ -144,15 +147,10 @@ export default function Home() {
       <header className="sticky top-0 z-20 border-b border-[hsl(var(--border))] bg-[hsl(var(--background)/0.82)] backdrop-blur-md">
         <div className="section-container flex h-16 items-center justify-between gap-4">
           <Link href="/" className="flex items-center gap-3">
-            <span
-              className="flex h-10 w-10 items-center justify-center rounded-xl bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] shadow-sm"
-              aria-hidden
-            >
-              <LayoutGrid className="h-5 w-5 opacity-90" />
-            </span>
+            <Image src="/vadi-logo-full.png" alt="VADI Fresh" width={500} height={500} className="h-14 w-14 object-contain" priority />
             <span>
               <span className="block text-sm font-semibold leading-none tracking-tight">
-                VADI
+                VADI Fresh
               </span>
               <span className="mt-0.5 block text-xs text-[hsl(var(--muted-foreground))]">
                 Admin &amp; driver hub
@@ -196,8 +194,7 @@ export default function Home() {
               {" "}
               <kbd className="rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-1.5 py-0.5 font-sans text-xs font-medium text-[hsl(var(--foreground))]">
                 2
-              </kbd>
-              {" "}
+              </kbd>{" "}
               <kbd className="rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-1.5 py-0.5 font-sans text-xs font-medium text-[hsl(var(--foreground))]">
                 3
               </kbd>{" "}
@@ -325,12 +322,7 @@ export default function Home() {
         </div>
       </main>
 
-      <footer className="mt-auto border-t border-[hsl(var(--border))] py-6">
-        <div className="section-container flex flex-col items-center justify-between gap-3 text-center text-xs text-[hsl(var(--muted-foreground))] sm:flex-row sm:text-left">
-          <span>vadi-admin · internal tools &amp; marketing entry</span>
-          <span>Keys 1–3 open a door · arrows move the highlight</span>
-        </div>
-      </footer>
+      <HubFooter />
     </div>
   );
 }
