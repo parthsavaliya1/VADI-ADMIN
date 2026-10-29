@@ -37,6 +37,7 @@ type Variant = {
   lowStockThreshold: number;
   sku: string;
   image: string;
+  images?: string[];
   isDefault: boolean;
   isActive: boolean;
 };
@@ -229,16 +230,33 @@ export default function AddProductClient() {
     index: number,
     e: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
     setUploading(true);
     try {
-      const url = await uploadImageToSupabase(file);
-      if (url) updateVariant(index, "image", url);
+      const urls = (await Promise.all(files.map((file) => uploadImageToSupabase(file)))).filter((url): url is string => Boolean(url));
+      setVariants((current) => current.map((variant, i) => {
+        if (i !== index) return variant;
+        const previous = variant.images?.length ? variant.images : variant.image ? [variant.image] : [];
+        const images = [...new Set([...previous, ...urls])];
+        return { ...variant, images, image: images[0] || "" };
+      }));
+    } catch (error) {
+      console.error("Variant image upload failed:", error);
+      alert("Could not upload variant images. Please try again.");
     } finally {
       setUploading(false);
       e.target.value = "";
     }
+  };
+
+  const removeVariantImage = (index: number, url: string) => {
+    setVariants((current) => current.map((variant, i) => {
+      if (i !== index) return variant;
+      const photos = variant.images?.length ? variant.images : variant.image ? [variant.image] : [];
+      const images = photos.filter((photo) => photo !== url);
+      return { ...variant, images, image: images[0] || "" };
+    }));
   };
 
   const removeVariant = (index: number) => {
@@ -408,6 +426,7 @@ export default function AddProductClient() {
           stock: Number(variant.stock),
           lowStockThreshold: Number(variant.lowStockThreshold),
           image: variant.image || "",
+          images: variant.images || (variant.image ? [variant.image] : []),
         })),
       };
 
@@ -771,39 +790,24 @@ export default function AddProductClient() {
 
                       <div className="mt-4">
                         <label className="block text-xs font-medium mb-1.5 text-muted-foreground">
-                          Variant image
+                          Variant images
                         </label>
                         <p className="text-xs text-muted-foreground mb-2">
-                          Shown on the product page when this size is selected.
+                          Upload front and back views. The first photo is the cover for this pack size.
                         </p>
-                        {variant.image ? (
-                          <div className="flex items-center gap-3">
-                            <img
-                              src={variant.image}
-                              alt={`${variant.packSize}${variant.packUnit}`}
-                              className="h-16 w-16 rounded-lg object-cover border"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => updateVariant(index, "image", "")}
-                              className="text-sm text-red-600 hover:underline"
-                            >
-                              Remove
-                            </button>
-                          </div>
-                        ) : (
+                        <div className="flex flex-wrap items-center gap-3">
+                          {(variant.images?.length ? variant.images : variant.image ? [variant.image] : []).map((url, photoIndex) => (
+                            <div key={url} className="flex flex-col items-center gap-1">
+                              <img src={url} alt={String(variant.packSize) + variant.packUnit + " photo " + (photoIndex + 1)} className="h-20 w-20 rounded-lg object-cover border" />
+                              <span className="text-xs text-muted-foreground">{photoIndex === 0 ? "Front / cover" : photoIndex === 1 ? "Back" : "Extra photo"}</span>
+                              <button type="button" onClick={() => removeVariantImage(index, url)} className="text-xs text-red-600 hover:underline">Remove</button>
+                            </div>
+                          ))}
                           <label className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border bg-background text-sm cursor-pointer hover:border-primary/50">
-                            <Upload className="h-4 w-4" />
-                            Add image
-                            <input
-                              type="file"
-                              accept="image/*"
-                              className="hidden"
-                              disabled={uploading}
-                              onChange={(e) => handleVariantImageUpload(index, e)}
-                            />
+                            <Upload className="h-4 w-4" /> Add pack images
+                            <input type="file" accept="image/*" multiple className="hidden" disabled={uploading} onChange={(e) => handleVariantImageUpload(index, e)} />
                           </label>
-                        )}
+                        </div>
                       </div>
                     </div>
                   ))}
