@@ -5,6 +5,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import {
+  ShieldCheck,
   LayoutDashboard,
   Users,
   Package,
@@ -107,6 +108,11 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
       name: "Users",
       href: "/admin/users",
       icon: Users,
+    },
+    {
+      name: "Reviewer Accounts",
+      href: "/admin/reviewers",
+      icon: ShieldCheck,
     },
     {
       name: "Sellers",

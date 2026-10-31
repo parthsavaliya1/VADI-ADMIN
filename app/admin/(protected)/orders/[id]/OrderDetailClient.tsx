@@ -63,6 +63,8 @@ type Order = {
     addressId: string;
   };
   createdAt: string;
+  returnRequest?: { status?: string; refundAmount?: number; refundedTo?: string };
+  statusHistory?: { from: string; to: string; reason: string; changedAt: string; codCollected?: boolean }[];
 };
 
 /* ── Style maps ── */
@@ -108,6 +110,10 @@ export default function OrderDetailClient({ orderId }: { orderId: string }) {
   const [updating, setUpdating] = useState(false);
   const [handoverInput, setHandoverInput] = useState("");
   const [verifyingHandover, setVerifyingHandover] = useState(false);
+  const [reopenStatus, setReopenStatus] = useState("confirmed");
+  const [reopenReason, setReopenReason] = useState("");
+  const [reopenCod, setReopenCod] = useState("");
+  const [reopening, setReopening] = useState(false);
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -131,9 +137,7 @@ export default function OrderDetailClient({ orderId }: { orderId: string }) {
     if (!order || order.status === newStatus) return;
     setUpdating(true);
     try {
-      const { data } = await API.put(`/api/admin/orders/${orderId}/status`, {
-        status: newStatus,
-      });
+      const { data } = await API.put(`/api/admin/orders/${orderId}/status`, { status: newStatus });
       if (data.success) {
         setOrder({ ...order, ...data.data, status: newStatus });
         setHandoverInput("");
@@ -147,6 +151,22 @@ export default function OrderDetailClient({ orderId }: { orderId: string }) {
     } finally {
       setUpdating(false);
     }
+  };
+
+  const reopenOrder = async () => {
+    if (!order || reopening) return;
+    if (reopenReason.trim().length < 5) { alert("Enter a correction reason of at least 5 characters."); return; }
+    if (order.payment.method === "cod" && !reopenCod) { alert("Confirm whether COD cash was actually collected."); return; }
+    setReopening(true);
+    try {
+      const { data } = await API.post(`/api/admin/orders/${orderId}/reopen`, {
+        status: reopenStatus, reason: reopenReason.trim(),
+        ...(order.payment.method === "cod" ? { codCollected: reopenCod === "yes" } : {}),
+      });
+      if (data.success) { setOrder(data.data); setReopenReason(""); setReopenCod(""); setHandoverInput(""); alert(data.message); }
+    } catch (error: unknown) {
+      alert((error as { response?: { data?: { message?: string } } }).response?.data?.message || "Could not reopen this order");
+    } finally { setReopening(false); }
   };
 
   const verifyHandover = async () => {
@@ -331,6 +351,18 @@ export default function OrderDetailClient({ orderId }: { orderId: string }) {
             )}
 
             {/* Status Update */}
+            {order.status === "delivered" && <section className="rounded-xl border bg-card p-6 space-y-4">
+              <h2 className="text-lg font-semibold">Correct an accidental delivery</h2>
+              <p className="text-sm text-muted-foreground">Reopen this order to continue processing it. Online payments remain paid. Stock stays reserved. A new delivery code is generated when it goes out for delivery again.</p>
+              {(["pending", "processing", "approved"].includes(order.returnRequest?.status || "") || order.payment.status === "refunded") ? <p className="text-sm text-amber-700">This order has a return or refund. Review it in <Link href="/admin/returns" className="underline">Returns</Link>; it cannot be reopened here.</p> : <>
+                <label className="block text-sm font-medium">New status<select value={reopenStatus} onChange={(e) => setReopenStatus(e.target.value)} disabled={reopening} className="mt-2 block w-full rounded-lg border bg-background p-2"><option value="placed">Placed</option><option value="confirmed">Confirmed</option><option value="packed">Packed</option><option value="shipped">Shipped</option></select></label>
+                <label className="block text-sm font-medium">Reason for correction<textarea value={reopenReason} onChange={(e) => setReopenReason(e.target.value)} maxLength={500} disabled={reopening} placeholder="Why was this order marked delivered by mistake?" className="mt-2 block min-h-20 w-full rounded-lg border bg-background p-3" /></label>
+                {order.payment.method === "cod" && <label className="block text-sm font-medium">Was COD cash actually collected?<select value={reopenCod} onChange={(e) => setReopenCod(e.target.value)} disabled={reopening} className="mt-2 block w-full rounded-lg border bg-background p-2"><option value="">Select cash collection status</option><option value="yes">Yes — keep payment paid</option><option value="no">No — reset payment to pending</option></select><span className="mt-2 block text-xs text-muted-foreground">Choosing No reverses this order’s seller credit until payment is collected again. It does not refund or move money.</span></label>}
+                <button type="button" onClick={() => void reopenOrder()} disabled={reopening || reopenReason.trim().length < 5 || (order.payment.method === "cod" && !reopenCod)} className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50">{reopening ? "Reopening…" : "Reopen order"}</button>
+              </>}
+            </section>}
+            {!!order.statusHistory?.length && <section className="rounded-xl border bg-card p-6 space-y-3"><h2 className="text-lg font-semibold">Status corrections</h2>{order.statusHistory.map((entry, index) => <div key={index} className="border-t pt-3 text-sm"><p className="font-medium">{formatStatus(entry.from)} → {formatStatus(entry.to)}</p><p>{entry.reason}</p><p className="text-xs text-muted-foreground">{new Date(entry.changedAt).toLocaleString()}{typeof entry.codCollected === "boolean" ? ` · COD collected: ${entry.codCollected ? "Yes" : "No"}` : ""}</p></div>)}</section>}
+
             <div className="bg-card rounded-xl shadow-sm border p-6">
               <h2 className="text-lg font-semibold mb-4">
                 Update Order Status
@@ -340,7 +372,7 @@ export default function OrderDetailClient({ orderId }: { orderId: string }) {
                   <button
                     key={status}
                     onClick={() => updateStatus(status)}
-                    disabled={updating || order.status === status}
+                    disabled={updating || reopening || order.status === status || ["delivered", "cancelled", "returned"].includes(order.status)}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
                       order.status === status
                         ? `${STATUS_STYLES[status] ?? "bg-primary text-primary-foreground"} cursor-default`

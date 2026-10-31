@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Search, Eye, Package, X, Truck, CheckCircle } from "lucide-react";
 import API from "@/lib/api";
 import Link from "next/link";
@@ -44,9 +44,11 @@ export default function OrdersClient() {
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     setLoading(true);
+    setError("");
     try {
       const { data } = await API.get("/api/admin/orders", {
         params: {
@@ -61,14 +63,15 @@ export default function OrdersClient() {
       setTotal(data.pagination?.total || 0);
     } catch (error) {
       console.error("Fetch orders error:", error);
+      setError("Could not load orders. Please retry.");
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, statusFilter, search]);
 
   useEffect(() => {
-    fetchOrders();
-  }, [page, statusFilter, search]);
+    void fetchOrders();
+  }, [fetchOrders]);
 
   const updateStatus = async (id: string, status: string) => {
     try {
@@ -99,6 +102,11 @@ export default function OrdersClient() {
         </p>
       </div>
 
+      <div className="flex items-center gap-3">
+        <button type="button" onClick={() => void fetchOrders()} disabled={loading} className="rounded-lg border px-4 py-2 text-sm disabled:opacity-50">Refresh orders</button>
+        {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
+      </div>
+
       {/* Filters */}
       <div className="bg-card rounded-xl shadow-sm p-4 flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
@@ -107,7 +115,7 @@ export default function OrdersClient() {
             type="text"
             placeholder="Search by Order Number..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
             className="w-full pl-10 pr-4 py-2 rounded-lg border bg-background text-sm"
           />
         </div>
@@ -169,7 +177,7 @@ export default function OrdersClient() {
                   className="border-t hover:bg-muted/30 transition"
                 >
                   <td className="p-4">
-                    <div className="font-semibold">#{order.orderNumber}</div>
+                    <div className="font-semibold break-all">#{order.orderNumber}</div>
                     <div className="text-xs text-muted-foreground mt-0.5">
                       {new Date(order.createdAt).toLocaleString()}
                     </div>
@@ -234,7 +242,7 @@ export default function OrdersClient() {
               {/* Top row */}
               <div className="flex justify-between items-start gap-2">
                 <div>
-                  <div className="font-semibold">#{order.orderNumber}</div>
+                  <div className="font-semibold break-all">#{order.orderNumber}</div>
                   <div className="text-xs text-muted-foreground mt-0.5">
                     {new Date(order.createdAt).toLocaleString()}
                   </div>
@@ -261,6 +269,7 @@ export default function OrdersClient() {
                   {order.payment.method} · {order.payment.status}
                 </span>
               </div>
+
 
               {/* Actions */}
               <div className="pt-1 border-t">
