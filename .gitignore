@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Private environment files (keep only sanitized example templates)
+.env
+.env.*
+!.env.example
+!**/.env.example
