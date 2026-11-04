@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Search, Plus, Edit2, Trash2, Eye, Filter, X } from "lucide-react";
 import Link from "next/link";
 import API from "@/lib/api";
+import ProductCsvTools from "./ProductCsvTools";
 
 import {
   Table,
@@ -59,6 +60,14 @@ export default function ProductsClient() {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
+
+  const csvFilters: Record<string, string> = {};
+  if (search) csvFilters.search = search;
+  if (categoryFilter) csvFilters.category = categoryFilter;
+  if (statusFilter === "active") csvFilters.isActive = "true";
+  else if (statusFilter === "inactive") csvFilters.isActive = "false";
+  else if (statusFilter === "pending") csvFilters.approvalStatus = "pending";
+  else if (["featured", "trending", "bestDeal"].includes(statusFilter)) csvFilters[statusFilter] = "true";
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -181,6 +190,8 @@ export default function ProductsClient() {
           Add Product
         </Link>
       </div>
+
+      <ProductCsvTools filters={csvFilters} onImported={() => { void fetchProducts(); }} />
 
       {/* Filters Section */}
       <div className="bg-card rounded-xl shadow-sm p-4 space-y-4">
