@@ -1,9 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ArrowLeft, Loader2, MapPin, Phone } from "lucide-react";
 import Link from "next/link";
+import DriverPaymentCheck, { type PaymentSummary } from "@/app/driver/deliveries/DriverPaymentCheck";
 import API from "@/lib/api";
+import { returnStageLabel } from "@/lib/returnStage";
+import ReturnFulfillmentPanel from "../../returns/ReturnFulfillmentPanel";
+import ReturnRequestPanel, { type ReturnRequestSummary, type ReturnRefundPreview } from "./ReturnRequestPanel";
+import DeliveryStaffAssignment, { type DeliveryStaff } from "./DeliveryStaffAssignment";
 
 /* ── Types matching the real API response ── */
 
@@ -50,6 +55,7 @@ type Order = {
   totalDiscount: number;
   grandTotal: number;
   status: string;
+  assignedDriver?: DeliveryStaff | string | null;
   deliveryHandoverCode?: string;
   deliveryHandoverVerifiedAt?: string;
   payment: {
@@ -57,13 +63,17 @@ type Order = {
     status: string;
     isCod: boolean;
     codCollected?: boolean;
+    onlineAttempt?: string | null;
+    convertedFromCod?: boolean;
   };
   address: {
     snapshot: ShippingSnapshot;
     addressId: string;
   };
   createdAt: string;
-  returnRequest?: { status?: string; refundAmount?: number; refundedTo?: string };
+  cancellation?: { state?: string; refundStatus?: string; refundAmount?: number; refundedTo?: string; refundOperation?: { gatewayRefundId?: string } };
+  returnRequest?: ReturnRequestSummary;
+  returnRefundPreview?: ReturnRefundPreview;
   statusHistory?: { from: string; to: string; reason: string; changedAt: string; codCollected?: boolean }[];
 };
 
@@ -108,12 +118,21 @@ export default function OrderDetailClient({ orderId }: { orderId: string }) {
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
+  const [assigningStaff, setAssigningStaff] = useState(false);
   const [handoverInput, setHandoverInput] = useState("");
   const [verifyingHandover, setVerifyingHandover] = useState(false);
   const [reopenStatus, setReopenStatus] = useState("confirmed");
   const [reopenReason, setReopenReason] = useState("");
   const [reopenCod, setReopenCod] = useState("");
   const [reopening, setReopening] = useState(false);
+
+  const handlePaymentChecked = useCallback((summary: PaymentSummary) => {
+    setOrder(current => current && current._id === summary.orderId ? { ...current, payment: {
+      ...current.payment, method: summary.method, status: summary.status,
+      isCod: summary.method === 'cod', codCollected: summary.method === 'cod' && summary.status === 'paid',
+      onlineAttempt: summary.onlinePending ? 'pending' : null,
+    } } : current);
+  }, []);
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -134,12 +153,12 @@ export default function OrderDetailClient({ orderId }: { orderId: string }) {
   }, [orderId]);
 
   const updateStatus = async (newStatus: string) => {
-    if (!order || order.status === newStatus) return;
+    if (!order || assigningStaff || order.status === newStatus) return;
     setUpdating(true);
     try {
       const { data } = await API.put(`/api/admin/orders/${orderId}/status`, { status: newStatus });
       if (data.success) {
-        setOrder({ ...order, ...data.data, status: newStatus });
+        setOrder(current => current ? { ...current, ...data.data, status: newStatus, assignedDriver: current.assignedDriver } : current);
         setHandoverInput("");
       }
     } catch (error: unknown) {
@@ -154,7 +173,7 @@ export default function OrderDetailClient({ orderId }: { orderId: string }) {
   };
 
   const reopenOrder = async () => {
-    if (!order || reopening) return;
+    if (!order || reopening || assigningStaff) return;
     if (reopenReason.trim().length < 5) { alert("Enter a correction reason of at least 5 characters."); return; }
     if (order.payment.method === "cod" && !reopenCod) { alert("Confirm whether COD cash was actually collected."); return; }
     setReopening(true);
@@ -163,14 +182,24 @@ export default function OrderDetailClient({ orderId }: { orderId: string }) {
         status: reopenStatus, reason: reopenReason.trim(),
         ...(order.payment.method === "cod" ? { codCollected: reopenCod === "yes" } : {}),
       });
-      if (data.success) { setOrder(data.data); setReopenReason(""); setReopenCod(""); setHandoverInput(""); alert(data.message); }
+      if (data.success) { setOrder(current => ({ ...data.data, assignedDriver: current?.assignedDriver })); setReopenReason(""); setReopenCod(""); setHandoverInput(""); alert(data.message); }
     } catch (error: unknown) {
       alert((error as { response?: { data?: { message?: string } } }).response?.data?.message || "Could not reopen this order");
     } finally { setReopening(false); }
   };
 
+  const checkCancellationRefund = async () => {
+    if (updating) return;
+    setUpdating(true);
+    try {
+      const { data } = await API.post('/api/admin/orders/' + orderId + '/cancel/refund/check');
+      if (data.success) { setOrder(current => current ? { ...current, ...data.data, assignedDriver: current.assignedDriver } : current); alert(data.message); }
+    } catch (error: unknown) { alert((error as { response?: { data?: { message?: string } } }).response?.data?.message || 'Could not check refund'); }
+    finally { setUpdating(false); }
+  };
+
   const verifyHandover = async () => {
-    if (!order || !handoverInput.trim()) return;
+    if (!order || assigningStaff || !handoverInput.trim()) return;
     setVerifyingHandover(true);
     try {
       const { data } = await API.post(
@@ -178,7 +207,7 @@ export default function OrderDetailClient({ orderId }: { orderId: string }) {
         { code: handoverInput.trim() },
       );
       if (data.success && data.data) {
-        setOrder({ ...order, ...data.data });
+        setOrder(current => current ? { ...current, ...data.data, assignedDriver: current.assignedDriver } : current);
         setHandoverInput("");
         alert(data.message || "Verified");
       }
@@ -216,7 +245,7 @@ export default function OrderDetailClient({ orderId }: { orderId: string }) {
   }
 
   const statusStyle =
-    STATUS_STYLES[order.status ?? ""] ?? "bg-gray-100 text-gray-800";
+    (returnStageLabel(order.returnRequest) ? "bg-amber-50 text-amber-800" : STATUS_STYLES[order.status ?? ""]) ?? "bg-gray-100 text-gray-800";
   const addr = order.address?.snapshot;
 
   return (
@@ -250,7 +279,7 @@ export default function OrderDetailClient({ orderId }: { orderId: string }) {
             <span
               className={`self-start sm:self-auto px-4 py-2 rounded-lg text-sm font-semibold ${statusStyle}`}
             >
-              {formatStatus(order.status)}
+              {returnStageLabel(order.returnRequest) || formatStatus(order.status)}
             </span>
           </div>
         </div>
@@ -315,6 +344,16 @@ export default function OrderDetailClient({ orderId }: { orderId: string }) {
               </div>
             </div>
 
+            {order.returnRequest?.status && <div id="return-fulfillment" className="scroll-mt-6 space-y-4">
+              <ReturnRequestPanel orderId={orderId} request={order.returnRequest} preview={order.returnRefundPreview} />
+              {order.returnRequest?.status === 'approved' && <ReturnFulfillmentPanel orderId={orderId} onStageChange={stage => setOrder(current => current?.returnRequest ? { ...current, returnRequest: { ...current.returnRequest, fulfillment: { ...current.returnRequest.fulfillment, stage } } } : current)} />}
+            </div>}
+
+{order.returnRequest?.status !== "approved" && (            <DeliveryStaffAssignment key={orderId} orderId={orderId} status={order.status} assignedDriver={order.assignedDriver}
+              disabled={updating || reopening || verifyingHandover}
+              onBusyChange={setAssigningStaff}
+              onAssigned={driver => setOrder(current => current ? { ...current, assignedDriver: driver } : current)} />)}
+
             {/* Delivery handover (customer tells driver this code) */}
             {order.status === "out_for_delivery" && (
               <div className="bg-card rounded-xl shadow-sm border border-purple-200/80 p-6">
@@ -341,7 +380,7 @@ export default function OrderDetailClient({ orderId }: { orderId: string }) {
                   <button
                     type="button"
                     onClick={() => void verifyHandover()}
-                    disabled={verifyingHandover || handoverInput.length !== 6}
+                    disabled={assigningStaff || verifyingHandover || handoverInput.length !== 6}
                     className="rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 disabled:opacity-50"
                   >
                     {verifyingHandover ? "Checking…" : "Verify & mark delivered"}
@@ -351,10 +390,10 @@ export default function OrderDetailClient({ orderId }: { orderId: string }) {
             )}
 
             {/* Status Update */}
-            {order.status === "delivered" && <section className="rounded-xl border bg-card p-6 space-y-4">
+            {order.status === "delivered" && order.returnRequest?.status !== "approved" && <section className="rounded-xl border bg-card p-6 space-y-4">
               <h2 className="text-lg font-semibold">Correct an accidental delivery</h2>
               <p className="text-sm text-muted-foreground">Reopen this order to continue processing it. Online payments remain paid. Stock stays reserved. A new delivery code is generated when it goes out for delivery again.</p>
-              {(["pending", "processing", "approved"].includes(order.returnRequest?.status || "") || order.payment.status === "refunded") ? <p className="text-sm text-amber-700">This order has a return or refund. Review it in <Link href="/admin/returns" className="underline">Returns</Link>; it cannot be reopened here.</p> : <>
+              {(["pending", "processing", "approved"].includes(order.returnRequest?.status || "") || order.payment.status === "refunded") ? <p className="text-sm text-amber-700">This order has a return or refund. Use <Link href={`/admin/returns/${orderId}`} className="underline">replacement management</Link> to continue this return.</p> : <>
                 <label className="block text-sm font-medium">New status<select value={reopenStatus} onChange={(e) => setReopenStatus(e.target.value)} disabled={reopening} className="mt-2 block w-full rounded-lg border bg-background p-2"><option value="placed">Placed</option><option value="confirmed">Confirmed</option><option value="packed">Packed</option><option value="shipped">Shipped</option></select></label>
                 <label className="block text-sm font-medium">Reason for correction<textarea value={reopenReason} onChange={(e) => setReopenReason(e.target.value)} maxLength={500} disabled={reopening} placeholder="Why was this order marked delivered by mistake?" className="mt-2 block min-h-20 w-full rounded-lg border bg-background p-3" /></label>
                 {order.payment.method === "cod" && <label className="block text-sm font-medium">Was COD cash actually collected?<select value={reopenCod} onChange={(e) => setReopenCod(e.target.value)} disabled={reopening} className="mt-2 block w-full rounded-lg border bg-background p-2"><option value="">Select cash collection status</option><option value="yes">Yes — keep payment paid</option><option value="no">No — reset payment to pending</option></select><span className="mt-2 block text-xs text-muted-foreground">Choosing No reverses this order’s seller credit until payment is collected again. It does not refund or move money.</span></label>}
@@ -365,14 +404,14 @@ export default function OrderDetailClient({ orderId }: { orderId: string }) {
 
             <div className="bg-card rounded-xl shadow-sm border p-6">
               <h2 className="text-lg font-semibold mb-4">
-                Update Order Status
+                {order.returnRequest?.status === "approved" ? "Return / replacement status" : "Update Order Status"}
               </h2>
-              <div className="flex flex-wrap gap-2">
+{order.returnRequest?.status === 'approved' ? <div className="space-y-2 text-sm"><p className="font-semibold">{returnStageLabel(order.returnRequest)}</p><p className="text-muted-foreground">Original delivery: {formatStatus(order.status)}. Continue the return or replacement using its controls.</p><Link href={`/admin/returns/${orderId}`} className="inline-flex rounded-lg bg-primary px-4 py-2 font-semibold text-primary-foreground">Manage pickup & replacement</Link></div> : (              <div className="flex flex-wrap gap-2">
                 {ORDER_STATUSES.map((status) => (
                   <button
                     key={status}
                     onClick={() => updateStatus(status)}
-                    disabled={updating || reopening || order.status === status || ["delivered", "cancelled", "returned"].includes(order.status)}
+                    disabled={assigningStaff || updating || reopening || order.status === status || ["delivered", "cancelled", "returned"].includes(order.status)}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
                       order.status === status
                         ? `${STATUS_STYLES[status] ?? "bg-primary text-primary-foreground"} cursor-default`
@@ -382,7 +421,7 @@ export default function OrderDetailClient({ orderId }: { orderId: string }) {
                     {formatStatus(status)}
                   </button>
                 ))}
-              </div>
+              </div>)}
             </div>
           </div>
 
@@ -426,6 +465,14 @@ export default function OrderDetailClient({ orderId }: { orderId: string }) {
             {/* Payment */}
             <div className="bg-card rounded-xl shadow-sm border p-6">
               <h2 className="text-lg font-semibold mb-4">Payment Details</h2>
+              {order.cancellation?.state && <div className="mb-4 rounded-lg border p-3 text-sm space-y-2">
+                <p>Cancellation refund: {order.cancellation.refundStatus || 'none'} · ₹{order.cancellation.refundAmount || 0} · {order.cancellation.refundedTo || 'none'}</p>
+                {order.cancellation.refundOperation?.gatewayRefundId && <p>Refund reference: {order.cancellation.refundOperation.gatewayRefundId}</p>}
+                {order.cancellation.state === 'processing' && <button type="button" disabled={updating} onClick={() => void checkCancellationRefund()} className="text-primary underline">Check / resume refund</button>}
+              </div>}
+              {order.payment.onlineAttempt && <p role="status" className="mb-3 text-sm font-semibold text-amber-800">Online payment is being checked. Do not collect cash.</p>}
+              {order.payment.convertedFromCod && order.payment.status === 'paid' && <p className="mb-3 text-sm font-semibold text-green-700">Paid online — do not collect cash.</p>}
+              {order.status === 'out_for_delivery' && order.payment.method === 'cod' && order.payment.status === 'pending' && <DriverPaymentCheck key={orderId} orderRef={orderId} admin onPaymentChecked={handlePaymentChecked} />}
               <div className="space-y-3">
                 <div>
                   <p className="text-xs text-muted-foreground uppercase font-semibold tracking-wide">

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Search, Eye, Package, X, Truck, CheckCircle } from "lucide-react";
 import API from "@/lib/api";
+import { returnStageLabel, type AdminReturnSummary } from "@/lib/returnStage";
 import Link from "next/link";
 
 type Order = {
@@ -18,6 +19,8 @@ type Order = {
   totalQuantity: number;
   grandTotal: number;
   status: string;
+  returnRequest?: AdminReturnSummary;
+  assignedDriver?: { _id: string; name?: string; phone?: string } | null;
   payment: {
     method: string;
     status: string;
@@ -98,7 +101,7 @@ export default function OrdersClient() {
       <div>
         <h1 className="text-2xl md:text-3xl font-bold">Orders</h1>
         <p className="text-muted-foreground text-sm mt-1">
-          Manage customer orders ({total} total)
+          Manage customer orders ({total} total) <button type="button" onClick={() => void fetchOrders()} disabled={loading} className="ml-3 underline disabled:opacity-50">Refresh orders</button>
         </p>
       </div>
 
@@ -180,6 +183,7 @@ export default function OrdersClient() {
                     <div className="font-semibold break-all">#{order.orderNumber}</div>
                     <div className="text-xs text-muted-foreground mt-0.5">
                       {new Date(order.createdAt).toLocaleString()}
+                      <span className="block mt-1">Staff: {order.assignedDriver?.name || order.assignedDriver?.phone || "Not assigned"}</span>
                     </div>
                   </td>
                   <td className="p-4 text-muted-foreground">
@@ -199,11 +203,11 @@ export default function OrdersClient() {
                   <td className="p-4">
                     <span
                       className={`px-2.5 py-1 text-xs font-medium rounded-full capitalize ${
-                        STATUS_STYLES[order.status] ??
+                        (returnStageLabel(order.returnRequest) ? "bg-amber-50 text-amber-800" : STATUS_STYLES[order.status]) ??
                         "bg-muted text-muted-foreground"
                       }`}
                     >
-                      {order.status.replace(/_/g, " ")}
+                      {returnStageLabel(order.returnRequest) || order.status.replace(/_/g, " ")}
                     </span>
                   </td>
                   <td className="p-4">
@@ -245,15 +249,16 @@ export default function OrdersClient() {
                   <div className="font-semibold break-all">#{order.orderNumber}</div>
                   <div className="text-xs text-muted-foreground mt-0.5">
                     {new Date(order.createdAt).toLocaleString()}
+                      <span className="block mt-1">Staff: {order.assignedDriver?.name || order.assignedDriver?.phone || "Not assigned"}</span>
                   </div>
                 </div>
                 <span
                   className={`px-2.5 py-1 text-xs font-medium rounded-full capitalize whitespace-nowrap ${
-                    STATUS_STYLES[order.status] ??
+                    (returnStageLabel(order.returnRequest) ? "bg-amber-50 text-amber-800" : STATUS_STYLES[order.status]) ??
                     "bg-muted text-muted-foreground"
                   }`}
                 >
-                  {order.status.replace(/_/g, " ")}
+                  {returnStageLabel(order.returnRequest) || order.status.replace(/_/g, " ")}
                 </span>
               </div>
 
@@ -318,6 +323,14 @@ function OrderActions({
         View
       </Link>
 
+      {!["delivered", "cancelled", "returned"].includes(order.status) && <Link
+        href={`/admin/orders/${order._id}#delivery-staff-heading`}
+        className={`${btnBase} bg-muted hover:bg-muted/70`}>
+        <Truck size={13} />{order.assignedDriver ? "Reassign staff" : "Assign staff"}
+      </Link>}
+
+      {order.returnRequest?.status && <Link href={order.returnRequest.status === "approved" ? `/admin/returns/${order._id}` : `/admin/returns?orderId=${order._id}`} className={`${btnBase} bg-amber-100 text-amber-900`}>{order.returnRequest.items?.some(item => item.action === "replace") ? "Manage replacement" : "Manage return"}</Link>}
+
       {/* Confirm */}
       {order.status === "placed" && (
         <button
@@ -374,7 +387,7 @@ function OrderActions({
       )}
 
       {/* Cancel */}
-      {order.status !== "delivered" && order.status !== "cancelled" && (
+      {["placed", "confirmed", "packed", "shipped"].includes(order.status) && (
         <button
           onClick={() => onCancel(order._id)}
           className={`${btnBase} bg-red-50 text-red-500 hover:bg-red-500 hover:text-white`}

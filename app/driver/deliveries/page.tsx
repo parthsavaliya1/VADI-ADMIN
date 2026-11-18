@@ -8,8 +8,10 @@ import {
   DialogTitle,
 } from "@/app/components/ui/dialog";
 import API from "@/lib/api";
+import DriverReturnTasks from "./DriverReturnTasks";
 import { ChevronLeft, ChevronRight, MapPin, Search } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
+import type { PaymentSummary } from "./DriverPaymentCheck";
 import DriverVerifyHandoverForm from "./DriverVerifyHandoverForm";
 
 type OrderItem = {
@@ -48,6 +50,7 @@ type DeliveryOrder = {
     status?: string;
     isCod?: boolean;
     codCollected?: boolean;
+    onlineAttempt?: string | null;
   };
 };
 
@@ -176,7 +179,7 @@ function OrderDetails({
         >
           {payName}
         </span>
-        {isCod ? (
+        {order.payment?.onlineAttempt ? <span className="font-semibold text-amber-900">Online payment pending — do not collect cash</span> : isCod ? (
           <span className="text-muted-foreground">
             {codCollected ? (
               <span className="text-green-700">Cash collected (marked paid)</span>
@@ -231,6 +234,16 @@ export default function DriverDeliveriesPage() {
   const [bucket, setBucket] = useState<"all" | Bucket>("all");
   const [page, setPage] = useState(1);
   const [selected, setSelected] = useState<ListedOrder | null>(null);
+
+  const handlePaymentChecked = useCallback((summary: PaymentSummary) => {
+    const payment = { method: summary.method, status: summary.status,
+      isCod: summary.method === 'cod', codCollected: summary.method === 'cod' && summary.status === 'paid',
+      onlineAttempt: summary.onlinePending ? 'pending' : null };
+    setSelected(current => current && current._id === summary.orderId
+      ? { ...current, payment: { ...current.payment, ...payment } } : current);
+    setAssigned(rows => rows.map(row => row._id === summary.orderId
+      ? { ...row, payment: { ...row.payment, ...payment } } : row));
+  }, []);
 
   const fetchLists = useCallback(async () => {
     setLoading(true);
@@ -352,6 +365,7 @@ export default function DriverDeliveriesPage() {
 
   return (
     <div className="space-y-5">
+      <DriverReturnTasks />
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold">Deliveries</h1>
@@ -556,6 +570,7 @@ export default function DriverDeliveriesPage() {
                   key={selected._id}
                   compact
                   orderNumber={selected.orderNumber}
+                  onPaymentChecked={handlePaymentChecked}
                   onVerified={() => {
                     setSelected(null);
                     void fetchLists();

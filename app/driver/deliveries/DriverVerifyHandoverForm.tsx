@@ -1,14 +1,17 @@
 "use client";
 
+import DriverPaymentCheck, { type PaymentSummary } from "./DriverPaymentCheck";
 import API from "@/lib/api";
 import { useState } from "react";
 
 export default function DriverVerifyHandoverForm({
   onVerified,
+  onPaymentChecked,
   orderNumber,
   compact = false,
 }: {
   onVerified?: () => void;
+  onPaymentChecked?: (summary: PaymentSummary) => void;
   orderNumber?: string;
   compact?: boolean;
 }) {
@@ -97,6 +100,7 @@ export default function DriverVerifyHandoverForm({
           onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
         />
       </div>
+      <DriverPaymentCheck key={orderId} orderRef={orderId} onPaymentChecked={onPaymentChecked} />
       <button
         type="button"
         disabled={loading}
